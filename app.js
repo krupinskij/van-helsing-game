@@ -1,5 +1,5 @@
 let rot = 0;
-let posX = 500;
+let posX = 0;
 let posY = 0;
 
 const player = {
@@ -59,3 +59,52 @@ const animate = () => {
   window.requestAnimationFrame(animate);
 };
 window.requestAnimationFrame(animate);
+
+const room = {
+  start: [2, 1],
+  walls: [
+    [5, 'N'],
+    [3, 'E'],
+    [3, 'N'],
+    [3, 'E'],
+    [8, 'S'],
+    [2, 'W'],
+    [1, 'S'],
+    [1, 'W'],
+    [1, 'N'],
+    [3, 'W'],
+  ],
+};
+
+const createRoom = room => {
+  const roomElem = document.createElement('div');
+  roomElem.className = 'room';
+  let [x, y] = room.start;
+
+  room.walls.forEach(([len, dir]) => {
+    const wall = document.createElement('div');
+    wall.dataset.dir = dir;
+    wall.style.width = `${len * 200}px`;
+    wall.style.setProperty('--x', `${x * 200}px`);
+    wall.style.setProperty('--y', `${y * 200}px`);
+    roomElem.appendChild(wall);
+
+    switch (dir) {
+      case 'N':
+        x -= len;
+        break;
+      case 'S':
+        x += len;
+        break;
+      case 'E':
+        y -= len;
+        break;
+      case 'W':
+        y += len;
+        break;
+    }
+  });
+  document.body.appendChild(roomElem);
+};
+
+createRoom(room);
