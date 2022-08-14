@@ -1,0 +1,52 @@
+:root {
+  --posX: 500px;
+  --posY: 0px;
+  --rot: 0rad;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+* {
+  transform-style: preserve-3d;
+}
+
+.wrap {
+  perspective: 500px;
+  perspective-origin: 100px 100px;
+  transform: translateX(200px) translateY(200px);
+}
+
+.cube div {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+}
+
+.back {
+  transform: translateZ(500px) rotateY(var(--rot)) translateZ(-500px)
+    translateX(calc(-1 * var(--posY))) translateZ(var(--posX)) rotateY(180deg) translateZ(100px);
+  background-color: rgba(0, 0, 255, 0.1);
+}
+.right {
+  transform: translateZ(500px) rotateY(var(--rot)) translateZ(-500px)
+    translateX(calc(-1 * var(--posY))) translateZ(var(--posX)) rotateY(90deg) translateZ(100px);
+  transform-origin: center;
+  background-color: rgba(255, 0, 0, 0.1);
+}
+.left {
+  transform: translateZ(500px) rotateY(var(--rot)) translateZ(-500px)
+    translateX(calc(-1 * var(--posY))) translateZ(var(--posX)) rotateY(-90deg) translateZ(100px);
+  transform-origin: center;
+  background-color: rgba(255, 0, 0, 0.1);
+}
+.front {
+  transform: translateZ(500px) rotateY(var(--rot)) translateZ(-500px)
+    translateX(calc(-1 * var(--posY))) translateZ(var(--posX)) translateZ(calc(100px));
+  background-color: rgba(0, 255, 0, 0.1);
+}
