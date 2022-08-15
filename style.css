@@ -1,8 +1,10 @@
 :root {
-  --posX: 0px;
+  --posX: 600px;
   --posY: 0px;
   --rot: 0rad;
-  --pers: 500px;
+  --pers: 600px;
+  --sAL: 0;
+  --sAR: 0;
 }
 
 body {
@@ -14,13 +16,13 @@ body {
   transform-style: preserve-3d;
 }
 
-.room {
+.r {
   perspective: var(--pers);
   perspective-origin: 0px 100px;
   transform: translateX(var(--pers)) translateY(200px);
 }
 
-.room div {
+.w {
   position: absolute;
   display: flex;
   justify-content: center;
@@ -31,23 +33,25 @@ body {
 
   --translate: translateZ(var(--pers)) rotateY(var(--rot)) translateZ(calc(-1 * var(--pers)))
     translateX(calc(-1 * var(--posY))) translateZ(var(--posX));
-}
-
-div[data-dir='N'] {
-  transform: var(--translate) translateX(calc(-1 * var(--x))) translateZ(calc(-1 * var(--y)));
+  background-image: linear-gradient(
+    to left,
+    rgba(0, 0, 0, var(--sAL, 0)),
+    rgba(0, 0, 0, var(--sAR, 0))
+  );
   background-color: rgba(0, 0, 255, 1);
 }
-div[data-dir='E'] {
-  transform: var(--translate) rotateY(-90deg) translateX(calc(-1 * var(--y))) translateZ(var(--x));
-  background-color: rgba(255, 0, 0, 1);
+
+.w[data-d='N'] {
+  transform: var(--translate) translateX(calc(-1 * var(--x))) translateZ(calc(-1 * var(--y)));
 }
-div[data-dir='S'] {
+.w[data-d='E'] {
+  transform: var(--translate) rotateY(-90deg) translateX(calc(-1 * var(--y))) translateZ(var(--x));
+}
+.w[data-d='S'] {
   width: 1600px;
   transform: var(--translate) rotateY(180deg) translateX(var(--x)) translateZ(var(--y));
-  background-color: rgba(0, 255, 0, 1);
 }
-div[data-dir='W'] {
+.w[data-d='W'] {
   width: 400px;
   transform: var(--translate) rotateY(90deg) translateX(var(--y)) translateZ(calc(-1 * var(--x)));
-  background-color: rgba(255, 255, 0, 1);
 }
