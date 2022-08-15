@@ -1,11 +1,40 @@
-let rot = 0;
-let posX = 600;
-let posY = 0;
+let walls = [];
+let wallsH = [];
+let wallsV = [];
+
+const moveDistH = dist => {
+  for (let i = 0; i < wallsH.length; i++) {
+    const wall = wallsH[i];
+
+    const pX = player.posX - 600;
+    if (Math.abs(pX - +wall.dataset.y + dist) > 50) continue;
+
+    const isS = wall.dataset.d === 'S';
+    const pY = (player.posY + +wall.dataset.x) * (isS ? -1 : 1);
+    if (pY > -50 && +wall.dataset.w - pY > -50) return 0;
+  }
+
+  return dist;
+};
+
+const moveDistV = dist => {
+  for (let i = 0; i < wallsV.length; i++) {
+    const wall = wallsV[i];
+
+    if (Math.abs(player.posY + +wall.dataset.x + dist) > 50) continue;
+
+    const isE = wall.dataset.d === 'E';
+    const pX = (player.posX - 600 - +wall.dataset.y) * (isE ? -1 : 1);
+    if (pX > -50 && +wall.dataset.w - pX > -50) return 0;
+  }
+
+  return dist;
+};
 
 const player = {
   rot: 0,
-  posX: 0,
-  posY: 600,
+  posX: 200,
+  posY: 0,
 
   controller: {
     ArrowLeft: {
@@ -19,15 +48,15 @@ const player = {
     ArrowUp: {
       pressed: false,
       action: () => {
-        player.posX += 10 * Math.cos(player.rot);
-        player.posY += 10 * Math.sin(player.rot);
+        player.posX += moveDistH(10 * Math.cos(player.rot));
+        player.posY += moveDistV(10 * Math.sin(player.rot));
       },
     },
     ArrowDown: {
       pressed: false,
       action: () => {
-        player.posX -= 10 * Math.cos(player.rot);
-        player.posY -= 10 * Math.sin(player.rot);
+        player.posX += moveDistH(-10 * Math.cos(player.rot));
+        player.posY += moveDistV(-10 * Math.sin(player.rot));
       },
     },
   },
@@ -159,3 +188,7 @@ const createRoom = room => {
 
 createRoom(room);
 createRoom(room2);
+
+walls = Array.from(document.querySelectorAll('.w'));
+wallsH = walls.filter(wall => wall.dataset.d === 'N' || wall.dataset.d === 'S');
+wallsV = walls.filter(wall => wall.dataset.d === 'E' || wall.dataset.d === 'W');

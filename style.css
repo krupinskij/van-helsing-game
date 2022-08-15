@@ -1,5 +1,5 @@
 :root {
-  --posX: 600px;
+  --posX: 200px;
   --posY: 0px;
   --rot: 0rad;
   --pers: 600px;
@@ -10,6 +10,7 @@
 body {
   margin: 0;
   overflow: hidden;
+  background-color: black;
 }
 
 * {
@@ -48,10 +49,8 @@ body {
   transform: var(--translate) rotateY(-90deg) translateX(calc(-1 * var(--y))) translateZ(var(--x));
 }
 .w[data-d='S'] {
-  width: 1600px;
   transform: var(--translate) rotateY(180deg) translateX(var(--x)) translateZ(var(--y));
 }
 .w[data-d='W'] {
-  width: 400px;
   transform: var(--translate) rotateY(90deg) translateX(var(--y)) translateZ(calc(-1 * var(--x)));
 }
