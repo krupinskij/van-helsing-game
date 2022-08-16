@@ -2,16 +2,19 @@ let walls = [];
 let wallsH = [];
 let wallsV = [];
 
+const P_X = 0;
+const P_Y = 200;
+
 const moveDistH = dist => {
   for (let i = 0; i < wallsH.length; i++) {
     const wall = wallsH[i];
 
-    const pX = player.posX - 600;
-    if (Math.abs(pX - +wall.dataset.y + dist) > 50) continue;
+    const pY = player.posY - 600;
+    if (Math.abs(pY - +wall.dataset.y + dist) > 50) continue;
 
     const isS = wall.dataset.d === 'S';
-    const pY = (player.posY + +wall.dataset.x) * (isS ? -1 : 1);
-    if (pY > -50 && +wall.dataset.w - pY > -50) return 0;
+    const pX = (player.posX + +wall.dataset.x) * (isS ? -1 : 1);
+    if (pX > -50 && +wall.dataset.w - pX > -50) return 0;
   }
 
   return dist;
@@ -21,11 +24,11 @@ const moveDistV = dist => {
   for (let i = 0; i < wallsV.length; i++) {
     const wall = wallsV[i];
 
-    if (Math.abs(player.posY + +wall.dataset.x + dist) > 50) continue;
+    if (Math.abs(player.posX + +wall.dataset.x + dist) > 50) continue;
 
     const isE = wall.dataset.d === 'E';
-    const pX = (player.posX - 600 - +wall.dataset.y) * (isE ? -1 : 1);
-    if (pX > -50 && +wall.dataset.w - pX > -50) return 0;
+    const pY = (player.posY - 600 - +wall.dataset.y) * (isE ? -1 : 1);
+    if (pY > -50 && +wall.dataset.w - pY > -50) return 0;
   }
 
   return dist;
@@ -33,8 +36,8 @@ const moveDistV = dist => {
 
 const player = {
   rot: 0,
-  posX: 200,
-  posY: 0,
+  posX: P_X,
+  posY: P_Y,
 
   controller: {
     ArrowLeft: {
@@ -48,15 +51,15 @@ const player = {
     ArrowUp: {
       pressed: false,
       action: () => {
-        player.posX += moveDistH(10 * Math.cos(player.rot));
-        player.posY += moveDistV(10 * Math.sin(player.rot));
+        player.posX += moveDistV(10 * Math.sin(player.rot));
+        player.posY += moveDistH(10 * Math.cos(player.rot));
       },
     },
     ArrowDown: {
       pressed: false,
       action: () => {
-        player.posX += moveDistH(-10 * Math.cos(player.rot));
-        player.posY += moveDistV(-10 * Math.sin(player.rot));
+        player.posX += moveDistV(-10 * Math.sin(player.rot));
+        player.posY += moveDistH(-10 * Math.cos(player.rot));
       },
     },
   },
@@ -86,8 +89,8 @@ const executeMoves = () => {
 const calculateShadow = () => {
   const walls = document.querySelectorAll('.w');
   walls.forEach(element => {
-    let pXL = (pXR = player.posX - 600 - +element.dataset.y);
-    let pYL = (pYR = player.posY + +element.dataset.x);
+    let pXL = (pYR = player.posX + +element.dataset.x);
+    let pYL = (pXR = player.posY - 600 - +element.dataset.y);
 
     switch (element.dataset.d) {
       case 'N':
@@ -117,7 +120,7 @@ const animate = () => {
 };
 window.requestAnimationFrame(animate);
 
-const room = {
+const space = {
   start: [2, 1],
   walls: [
     [2, 'N'],
@@ -137,7 +140,7 @@ const room = {
   ],
 };
 
-const room2 = {
+const space2 = {
   start: [0, -4],
   walls: [
     [3, 'N'],
@@ -151,43 +154,65 @@ const room2 = {
   ],
 };
 
-const createRoom = room => {
+const createRoom = spaces => {
   const roomElem = document.createElement('div');
   roomElem.className = 'r';
-  let [x, y] = room.start;
 
-  room.walls.forEach(([len, dir]) => {
-    const wallElem = document.createElement('div');
-    wallElem.className = 'w';
-    wallElem.dataset.d = dir;
-    wallElem.dataset.x = x * 200;
-    wallElem.dataset.y = y * 200;
-    wallElem.dataset.w = len * 200;
-    wallElem.style.width = `${len * 200}px`;
-    wallElem.style.setProperty('--x', `${x * 200}px`);
-    wallElem.style.setProperty('--y', `${y * 200}px`);
-    roomElem.appendChild(wallElem);
+  let mh = 0,
+    mw = 0,
+    mx = 0,
+    my = 0;
+  spaces.forEach(space => {
+    let [x, y] = space.start;
 
-    switch (dir) {
-      case 'N':
-        x -= len;
-        break;
-      case 'S':
-        x += len;
-        break;
-      case 'E':
-        y -= len;
-        break;
-      case 'W':
-        y += len;
-        break;
-    }
+    mx = Math.max(mx, x);
+    my = Math.max(my, y);
+
+    let h = 0,
+      w = 0;
+    space.walls.forEach(([len, dir]) => {
+      const wallElem = document.createElement('div');
+      wallElem.className = 'w';
+      wallElem.dataset.d = dir;
+      wallElem.dataset.x = x * 200;
+      wallElem.dataset.y = y * 200;
+      wallElem.dataset.w = len * 200;
+      wallElem.style.width = `${len * 200}px`;
+      wallElem.style.setProperty('--x', `${x * 200}px`);
+      wallElem.style.setProperty('--y', `${y * 200}px`);
+      roomElem.appendChild(wallElem);
+
+      switch (dir) {
+        case 'N':
+          x -= len;
+          w += len;
+          break;
+        case 'S':
+          x += len;
+          break;
+        case 'E':
+          y -= len;
+          h += len;
+          break;
+        case 'W':
+          y += len;
+          break;
+      }
+    });
+    mh = Math.max(mh, h);
+    mw = Math.max(mw, w);
   });
+  const floorElem = document.createElement('div');
+  floorElem.className = 'f';
+  floorElem.style.width = `${mw * 200}px`;
+  floorElem.style.height = `${mh * 200}px`;
+  floorElem.style.setProperty('--x', `${mx * 200}px`);
+  floorElem.style.setProperty('--y', `${my * 200}px`);
+  roomElem.appendChild(floorElem);
   document.body.appendChild(roomElem);
 };
 
-createRoom(room);
-createRoom(room2);
+createRoom([space, space2]);
 
 walls = Array.from(document.querySelectorAll('.w'));
 wallsH = walls.filter(wall => wall.dataset.d === 'N' || wall.dataset.d === 'S');

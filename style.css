@@ -1,6 +1,6 @@
 :root {
-  --posX: 200px;
-  --posY: 0px;
+  --posX: 0px;
+  --posY: 200px;
   --rot: 0rad;
   --pers: 600px;
   --sAL: 0;
@@ -23,23 +23,33 @@ body {
   transform: translateX(var(--pers)) translateY(200px);
 }
 
+.f {
+  background: radial-gradient(
+      farthest-corner at calc(600px + var(--posX)) calc(1200px - var(--posY)),
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 1) 1600px
+    ),
+    url(./assets/floor.png);
+  transform-origin: 0;
+  transform: rotateX(90deg) translateZ(600px) translateY(var(--pers)) rotateZ(calc(-1 * var(--rot)))
+    translateY(calc(-1 * var(--pers))) translateX(calc(-200px - var(--x) - var(--posX)))
+    translateY(calc(400px - var(--y) + var(--posY)));
+  position: absolute;
+}
+
 .w {
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 200px;
-  height: 200px;
+  height: 300px;
   transform-origin: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, var(--sAL, 0)), rgba(0, 0, 0, var(--sAR, 0))),
+    url(./assets/wall.png) repeat;
 
   --translate: translateZ(var(--pers)) rotateY(var(--rot)) translateZ(calc(-1 * var(--pers)))
-    translateX(calc(-1 * var(--posY))) translateZ(var(--posX));
-  background-image: linear-gradient(
-    to left,
-    rgba(0, 0, 0, var(--sAL, 0)),
-    rgba(0, 0, 0, var(--sAR, 0))
-  );
-  background-color: rgba(0, 0, 255, 1);
+    translateX(calc(-1 * var(--posX))) translateY(-100px) translateZ(var(--posY));
 }
 
 .w[data-d='N'] {
