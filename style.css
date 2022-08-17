@@ -25,15 +25,16 @@ body {
 
 .f {
   background: radial-gradient(
-      farthest-corner at calc(600px + var(--posX)) calc(1200px - var(--posY)),
-      rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 1) 1600px
+      farthest-corner at calc(var(--x) + var(--posX)) calc(var(--pers) + var(--y) - var(--posY)),
+      #0000,
+      #000f 1000px
     ),
     url(./assets/floor.png);
   transform-origin: 0;
-  transform: rotateX(90deg) translateZ(600px) translateY(var(--pers)) rotateZ(calc(-1 * var(--rot)))
-    translateY(calc(-1 * var(--pers))) translateX(calc(-200px - var(--x) - var(--posX)))
-    translateY(calc(400px - var(--y) + var(--posY)));
+  transform: rotateX(90deg) translateZ(calc(0.5 * var(--h) - 200px)) translateY(var(--pers))
+    rotateZ(calc(-1 * var(--rot))) translateY(calc(-1 * var(--pers)))
+    translateX(calc(-1 * var(--x) - var(--posX)))
+    translateY(calc(0.5 * var(--h) - var(--y) + var(--posY)));
   position: absolute;
 }
 

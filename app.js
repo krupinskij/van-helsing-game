@@ -120,6 +120,66 @@ const animate = () => {
 };
 window.requestAnimationFrame(animate);
 
+const createRoom = spaces => {
+  const roomElem = document.createElement('div');
+  roomElem.className = 'r';
+
+  let mh = -Infinity,
+    mw = -Infinity,
+    mx = -Infinity,
+    my = -Infinity;
+  spaces.forEach(space => {
+    let [x, y] = space.start;
+
+    let h = 0,
+      w = 0;
+    space.walls.forEach(([len, dir]) => {
+      const wallElem = document.createElement('div');
+      wallElem.className = 'w';
+      wallElem.dataset.d = dir;
+      wallElem.dataset.x = x * 200;
+      wallElem.dataset.y = y * 200;
+      wallElem.dataset.w = len * 200;
+      wallElem.style.width = `${len * 200}px`;
+      wallElem.style.setProperty('--x', `${x * 200}px`);
+      wallElem.style.setProperty('--y', `${y * 200}px`);
+      roomElem.appendChild(wallElem);
+
+      switch (dir) {
+        case 'N':
+          x -= len;
+          w += len;
+          break;
+        case 'S':
+          x += len;
+          break;
+        case 'E':
+          y -= len;
+          h += len;
+          break;
+        case 'W':
+          y += len;
+          break;
+      }
+
+      mx = Math.max(mx, x);
+      my = Math.max(my, y);
+    });
+    mh = Math.max(mh, h);
+    mw = Math.max(mw, w);
+  });
+  const floorElem = document.createElement('div');
+  floorElem.className = 'f';
+  floorElem.style.width = `${mw * 200}px`;
+  floorElem.style.height = `${mh * 200}px`;
+  floorElem.style.setProperty('--w', `${mw * 200}px`);
+  floorElem.style.setProperty('--h', `${mh * 200}px`);
+  floorElem.style.setProperty('--x', `${mx * 200}px`);
+  floorElem.style.setProperty('--y', `${my * 200}px`);
+  roomElem.appendChild(floorElem);
+  document.body.appendChild(roomElem);
+};
+
 const space = {
   start: [2, 1],
   walls: [
@@ -154,65 +214,23 @@ const space2 = {
   ],
 };
 
-const createRoom = spaces => {
-  const roomElem = document.createElement('div');
-  roomElem.className = 'r';
+createRoom([space, space2]);
 
-  let mh = 0,
-    mw = 0,
-    mx = 0,
-    my = 0;
-  spaces.forEach(space => {
-    let [x, y] = space.start;
-
-    mx = Math.max(mx, x);
-    my = Math.max(my, y);
-
-    let h = 0,
-      w = 0;
-    space.walls.forEach(([len, dir]) => {
-      const wallElem = document.createElement('div');
-      wallElem.className = 'w';
-      wallElem.dataset.d = dir;
-      wallElem.dataset.x = x * 200;
-      wallElem.dataset.y = y * 200;
-      wallElem.dataset.w = len * 200;
-      wallElem.style.width = `${len * 200}px`;
-      wallElem.style.setProperty('--x', `${x * 200}px`);
-      wallElem.style.setProperty('--y', `${y * 200}px`);
-      roomElem.appendChild(wallElem);
-
-      switch (dir) {
-        case 'N':
-          x -= len;
-          w += len;
-          break;
-        case 'S':
-          x += len;
-          break;
-        case 'E':
-          y -= len;
-          h += len;
-          break;
-        case 'W':
-          y += len;
-          break;
-      }
-    });
-    mh = Math.max(mh, h);
-    mw = Math.max(mw, w);
-  });
-  const floorElem = document.createElement('div');
-  floorElem.className = 'f';
-  floorElem.style.width = `${mw * 200}px`;
-  floorElem.style.height = `${mh * 200}px`;
-  floorElem.style.setProperty('--x', `${mx * 200}px`);
-  floorElem.style.setProperty('--y', `${my * 200}px`);
-  roomElem.appendChild(floorElem);
-  document.body.appendChild(roomElem);
+const space3 = {
+  start: [-4, 4],
+  walls: [
+    [3, 'N'],
+    [1, 'W'],
+    [1, 'S'],
+    [1, 'W'],
+    [1, 'S'],
+    [1, 'E'],
+    [1, 'S'],
+    [1, 'E'],
+  ],
 };
 
-createRoom([space, space2]);
+createRoom([space3]);
 
 walls = Array.from(document.querySelectorAll('.w'));
 wallsH = walls.filter(wall => wall.dataset.d === 'N' || wall.dataset.d === 'S');
