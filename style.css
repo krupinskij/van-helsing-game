@@ -53,15 +53,26 @@ body {
     translateX(calc(-1 * var(--posX))) translateY(-100px) translateZ(var(--posY));
 }
 
-.w[data-d='N'] {
+.D::before {
+  position: absolute;
+  content: '';
+  inset: 20px;
+  top: 70px;
+  bottom: -20px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background-color: black;
+}
+
+.w.N {
   transform: var(--translate) translateX(calc(-1 * var(--x))) translateZ(calc(-1 * var(--y)));
 }
-.w[data-d='E'] {
+.w.E {
   transform: var(--translate) rotateY(-90deg) translateX(calc(-1 * var(--y))) translateZ(var(--x));
 }
-.w[data-d='S'] {
+.w.S {
   transform: var(--translate) rotateY(180deg) translateX(var(--x)) translateZ(var(--y));
 }
-.w[data-d='W'] {
+.w.W {
   transform: var(--translate) rotateY(90deg) translateX(var(--y)) translateZ(calc(-1 * var(--x)));
 }
