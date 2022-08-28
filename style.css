@@ -53,7 +53,7 @@ body {
     translateX(calc(-1 * var(--posX))) translateY(-100px) translateZ(var(--posY));
 }
 
-.D::before {
+.w.D::before {
   position: absolute;
   content: '';
   inset: 20px;
@@ -75,4 +75,79 @@ body {
 }
 .w.W {
   transform: var(--translate) rotateY(90deg) translateX(var(--y)) translateZ(calc(-1 * var(--x)));
+}
+
+.e.D {
+  --base: url(/assets/dwergi/dwergi_base.png);
+  --move1: url(/assets/dwergi/dwergi_foot-left.png);
+  --move2: url(/assets/dwergi/dwergi_foot-right.png);
+  --static: url(/assets/dwergi/dwergi_foot-stand.png);
+  --noshoot: url(/assets/dwergi/dwergi_arm-static.png);
+  --shoot: url(/assets/dwergi/dwergi_arm-shoot.png);
+  --bullet: url(/assets/dwergi/dwergi_arm-bullet.png);
+
+  height: 102px;
+  width: 66px;
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: translateZ(var(--pers)) rotateY(var(--rot)) translateZ(calc(-1 * var(--pers)))
+    translateY(98px) translateX(calc(var(--x) - var(--posX)))
+    translateZ(calc(var(--y) + var(--posY))) rotateY(calc(-1 * var(--rot)));
+  animation-duration: 3s;
+  animation-name: action;
+  animation-iteration-count: infinite;
+}
+
+.e.B {
+  --base: url(/assets/bride/bride_base.png);
+  --move1: url(/assets/bride/bride_wing-up.png);
+  --move2: url(/assets/bride/bride_wing-down.png);
+  --static: url(/assets/bride/bride_wing-up.png);
+  --noshoot: url();
+  --shoot: url(/assets/bride/bride_shoot.png);
+  --bullet: url(/assets/bride/bride_bullet.png);
+
+  height: 124px;
+  width: 354px;
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform-origin: center center;
+  transform: translateZ(var(--pers)) rotateY(var(--rot)) translateZ(calc(-1 * var(--pers)))
+    translateY(-100px) translateX(calc(var(--x) - var(--posX)))
+    translateZ(calc(var(--y) + var(--posY))) rotateY(calc(-1 * var(--rot)));
+  animation-duration: 3s;
+  animation-name: action;
+  animation-iteration-count: infinite;
+}
+
+@keyframes action {
+  0% {
+    background-image: var(--move1), var(--noshoot), var(--base);
+  }
+  10% {
+    background-image: var(--move2), var(--noshoot), var(--base);
+  }
+  20% {
+    background-image: var(--move1), var(--noshoot), var(--base);
+  }
+  30% {
+    background-image: var(--move2), var(--noshoot), var(--base);
+  }
+  40% {
+    background-image: var(--move1), var(--noshoot), var(--base);
+  }
+  50% {
+    background-image: var(--move2), var(--noshoot), var(--base);
+  }
+  60% {
+    background-image: var(--static), var(--shoot), var(--base);
+  }
+  80% {
+    background-image: var(--static), var(--bullet), var(--base);
+  }
+  100% {
+    background-image: var(--static), var(--noshoot), var(--base);
+  }
 }

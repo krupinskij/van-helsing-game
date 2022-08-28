@@ -1,6 +1,8 @@
 let walls = [];
 let wallsH = [];
 let wallsV = [];
+let enemies = [];
+let withShadow = [];
 
 const P_X = 500;
 const P_Y = 0;
@@ -175,6 +177,25 @@ const createRoom = spaces => {
   floorElem.style.setProperty('--x', `${mx * 200}px`);
   floorElem.style.setProperty('--y', `${my * 200}px`);
   roomElem.appendChild(floorElem);
+
+  const dwergi = document.createElement('div');
+  dwergi.className = 'e D';
+  const dx = 200;
+  const dy = 200;
+  dwergi.dataset.x = dx;
+  dwergi.dataset.y = dy;
+  dwergi.style.setProperty('--x', `${dx}px`);
+  dwergi.style.setProperty('--y', `${dy}px`);
+  roomElem.appendChild(dwergi);
+
+  const bride = document.createElement('div');
+  bride.className = 'e B';
+  bride.dataset.x = 0 * 200;
+  bride.dataset.y = 1 * 200;
+  bride.style.setProperty('--x', `0px`);
+  bride.style.setProperty('--y', `200px`);
+  roomElem.appendChild(bride);
+
   document.body.appendChild(roomElem);
 };
 
@@ -188,6 +209,7 @@ const space = {
     [5, 'S'],
     [5, 'W'],
   ],
+  enemies: ['D'],
 };
 
 const space2 = {
@@ -227,3 +249,4 @@ createRoom([space3]);
 wallsH = Array.from(document.querySelectorAll('.w.N, .w.S'));
 wallsV = Array.from(document.querySelectorAll('.w.E, .w.W'));
 walls = [...wallsH, ...wallsV];
+enemies = Array.from(document.querySelectorAll('.e'));
