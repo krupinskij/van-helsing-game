@@ -77,77 +77,116 @@ body {
   transform: var(--translate) rotateY(90deg) translateX(var(--y)) translateZ(calc(-1 * var(--x)));
 }
 
-.e.D {
-  --base: url(/assets/dwergi/dwergi_base.png);
-  --move1: url(/assets/dwergi/dwergi_foot-left.png);
-  --move2: url(/assets/dwergi/dwergi_foot-right.png);
-  --static: url(/assets/dwergi/dwergi_foot-stand.png);
-  --noshoot: url(/assets/dwergi/dwergi_arm-static.png);
-  --shoot: url(/assets/dwergi/dwergi_arm-shoot.png);
-  --bullet: url(/assets/dwergi/dwergi_arm-bullet.png);
-
-  height: 102px;
-  width: 66px;
+.e {
+  height: var(--h);
+  width: var(--w);
   position: absolute;
-  background-size: cover;
-  background-repeat: no-repeat;
   transform: translateZ(var(--pers)) rotateY(var(--rot)) translateZ(calc(-1 * var(--pers)))
-    translateY(98px) translateX(calc(var(--x) - var(--posX)))
+    translateY(var(--ty)) translateX(calc(var(--x) - var(--posX)))
     translateZ(calc(var(--y) + var(--posY))) rotateY(calc(-1 * var(--rot)));
+  background-repeat: no-repeat !important;
   animation-duration: 3s;
   animation-name: action;
   animation-iteration-count: infinite;
 }
 
-.e.B {
-  --base: url(/assets/bride/bride_base.png);
-  --move1: url(/assets/bride/bride_wing-up.png);
-  --move2: url(/assets/bride/bride_wing-down.png);
-  --static: url(/assets/bride/bride_wing-up.png);
-  --noshoot: url();
-  --shoot: url(/assets/bride/bride_shoot.png);
-  --bullet: url(/assets/bride/bride_bullet.png);
+.e.D {
+  --base: 3px 0px/54px 99px url(/assets/dwergi/base.png);
+  --move1: 12px 96px/36px 15px url(/assets/dwergi/footl.png);
+  --move2: 12px 96px/36px 15px url(/assets/dwergi/footr.png);
+  --stand: 12px 96px/36px 15px url(/assets/dwergi/stand.png);
+  --static: 0 48px/60px 39px url(/assets/dwergi/static.png);
+  --aim: 0 48px/60px 27px url(/assets/dwergi/aim.png);
+  --shot: 0 48px/60px 27px url(/assets/dwergi/shot.png);
+  --h: 108px;
+  --w: 60px;
+  --ty: 92px;
+}
 
-  height: 124px;
-  width: 354px;
-  position: absolute;
-  background-size: cover;
-  background-repeat: no-repeat;
-  transform-origin: center center;
-  transform: translateZ(var(--pers)) rotateY(var(--rot)) translateZ(calc(-1 * var(--pers)))
-    translateY(-100px) translateX(calc(var(--x) - var(--posX)))
-    translateZ(calc(var(--y) + var(--posY))) rotateY(calc(-1 * var(--rot)));
-  animation-duration: 3s;
-  animation-name: action;
-  animation-iteration-count: infinite;
+.e.B {
+  --base: 84px 28px/192px 100px url(/assets/bride/bride_base.png);
+  --move1: 0px 0px/364px 114px url(/assets/bride/bride_wing-up.png);
+  --move2: 0px 0px/364px 114px url(/assets/bride/bride_wing-down.png);
+  --stand: 0px 0px/364px 114px url(/assets/bride/bride_wing-up.png);
+  --static: 116px 36px/104px 44px url();
+  --aim: 116px 36px/104px 44px url(/assets/bride/bride_shoot.png);
+  --shot: 116px 36px/104px 44px url(/assets/bride/bride_bullet.png);
+  --h: 124px;
+  --w: 354px;
+  --ty: -100px;
+}
+
+.e.V {
+  --base: 36px 24px/84px 141px url(/assets/dracula/dracula_base.png);
+  --move1: 15px 0px/126px 168px url(/assets/dracula/dracula_move-1.png);
+  --move2: 0px 0px/156px 168px url(/assets/dracula/dracula_move-2.png);
+  --stand: 0px 0px/156px 168px url(/assets/dracula/dracula_move-2.png);
+  --static: 33px 66px/90px 30px url(/assets/dracula/dracula_noshoot.png);
+  --aim: 33px 27px/90px 42px url(/assets/dracula/dracula_shoot.png);
+  --shot: 30px 24px/96px 45px url(/assets/dracula/dracula_bullet.png);
+  --h: 168px;
+  --w: 156px;
+  --ty: 32px;
 }
 
 @keyframes action {
   0% {
-    background-image: var(--move1), var(--noshoot), var(--base);
+    background: var(--static), var(--move1), var(--base);
   }
   10% {
-    background-image: var(--move2), var(--noshoot), var(--base);
+    background: var(--static), var(--move2), var(--base);
   }
   20% {
-    background-image: var(--move1), var(--noshoot), var(--base);
+    background: var(--static), var(--move1), var(--base);
   }
   30% {
-    background-image: var(--move2), var(--noshoot), var(--base);
+    background: var(--static), var(--move2), var(--base);
   }
   40% {
-    background-image: var(--move1), var(--noshoot), var(--base);
+    background: var(--static), var(--move1), var(--base);
   }
   50% {
-    background-image: var(--move2), var(--noshoot), var(--base);
+    background: var(--static), var(--move2), var(--base);
   }
   60% {
-    background-image: var(--static), var(--shoot), var(--base);
+    background: var(--aim), var(--stand), var(--base);
   }
   80% {
-    background-image: var(--static), var(--bullet), var(--base);
+    background: var(--shot), var(--stand), var(--base);
   }
   100% {
-    background-image: var(--static), var(--noshoot), var(--base);
+    background: var(--static), var(--stand), var(--base);
   }
+}
+
+.t {
+  height: var(--h);
+  width: var(--w);
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: translateZ(var(--pers)) rotateY(var(--rot)) translateZ(calc(-1 * var(--pers)))
+    translateY(var(--ty)) translateX(calc(var(--x) - var(--posX)))
+    translateZ(calc(var(--y) + var(--posY))) rotateY(calc(-1 * var(--rot)));
+}
+
+.t.F {
+  background-image: url(/assets/f.png);
+  --h: 24px;
+  --w: 64px;
+  --ty: 176px;
+}
+
+.t.H {
+  background-image: url(/assets/hw.png);
+  --h: 44px;
+  --w: 28px;
+  --ty: 156px;
+}
+
+.t.A {
+  background-image: url(/assets/a.png);
+  --h: 46px;
+  --w: 58px;
+  --ty: 144px;
 }

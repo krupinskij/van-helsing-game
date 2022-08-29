@@ -196,6 +196,50 @@ const createRoom = spaces => {
   bride.style.setProperty('--y', `200px`);
   roomElem.appendChild(bride);
 
+  const dracula = document.createElement('div');
+  dracula.className = 'e V';
+  dracula.dataset.x = 2 * 200;
+  dracula.dataset.y = 1 * 200;
+  dracula.style.setProperty('--x', `400px`);
+  dracula.style.setProperty('--y', `200px`);
+  roomElem.appendChild(dracula);
+
+  const food = document.createElement('div');
+  food.className = 't F';
+  {
+    const dx = 600;
+    const dy = 200;
+    food.dataset.x = dx;
+    food.dataset.y = dy;
+    food.style.setProperty('--x', `${dx}px`);
+    food.style.setProperty('--y', `${dy}px`);
+  }
+  roomElem.appendChild(food);
+
+  const arrows = document.createElement('div');
+  arrows.className = 't A';
+  {
+    const dx = 200;
+    const dy = 400;
+    arrows.dataset.x = dx;
+    arrows.dataset.y = dy;
+    arrows.style.setProperty('--x', `${dx}px`);
+    arrows.style.setProperty('--y', `${dy}px`);
+  }
+  roomElem.appendChild(arrows);
+
+  const holywater = document.createElement('div');
+  holywater.className = 't H';
+  {
+    const dx = 400;
+    const dy = 400;
+    holywater.dataset.x = dx;
+    holywater.dataset.y = dy;
+    holywater.style.setProperty('--x', `${dx}px`);
+    holywater.style.setProperty('--y', `${dy}px`);
+  }
+  roomElem.appendChild(holywater);
+
   document.body.appendChild(roomElem);
 };
 
