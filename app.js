@@ -117,9 +117,17 @@ const calculateShadow = () => {
   });
 };
 
+const executeEnemyMoves = () => {
+  enemies.forEach(({ obj, elem }) => {
+    elem.style.setProperty('--x', `${obj.x}px`);
+    elem.style.setProperty('--y', `${obj.y}px`);
+  });
+};
+
 const animate = () => {
   executeMoves();
   calculateShadow();
+  executeEnemyMoves();
   window.requestAnimationFrame(animate);
 };
 window.requestAnimationFrame(animate);
@@ -178,67 +186,48 @@ const createRoom = spaces => {
   floorElem.style.setProperty('--y', `${my * 200}px`);
   roomElem.appendChild(floorElem);
 
-  const dwergi = document.createElement('div');
-  dwergi.className = 'e D';
-  const dx = 200;
-  const dy = 200;
-  dwergi.dataset.x = dx;
-  dwergi.dataset.y = dy;
-  dwergi.style.setProperty('--x', `${dx}px`);
-  dwergi.style.setProperty('--y', `${dy}px`);
-  roomElem.appendChild(dwergi);
+  const enemy = createEnemy('D', [200, 200], 5);
+  const enemy2 = createEnemy('D', [600, 400], 10);
+  enemies.push(enemy);
+  enemies.push(enemy2);
+  roomElem.appendChild(enemy.elem);
+  roomElem.appendChild(enemy2.elem);
 
-  const bride = document.createElement('div');
-  bride.className = 'e B';
-  bride.dataset.x = 0 * 200;
-  bride.dataset.y = 1 * 200;
-  bride.style.setProperty('--x', `0px`);
-  bride.style.setProperty('--y', `200px`);
-  roomElem.appendChild(bride);
+  // const food = document.createElement('div');
+  // food.className = 't F';
+  // {
+  //   const dx = 600;
+  //   const dy = 200;
+  //   food.dataset.x = dx;
+  //   food.dataset.y = dy;
+  //   food.style.setProperty('--x', `${dx}px`);
+  //   food.style.setProperty('--y', `${dy}px`);
+  // }
+  // roomElem.appendChild(food);
 
-  const dracula = document.createElement('div');
-  dracula.className = 'e V';
-  dracula.dataset.x = 2 * 200;
-  dracula.dataset.y = 1 * 200;
-  dracula.style.setProperty('--x', `400px`);
-  dracula.style.setProperty('--y', `200px`);
-  roomElem.appendChild(dracula);
+  // const arrows = document.createElement('div');
+  // arrows.className = 't A';
+  // {
+  //   const dx = 200;
+  //   const dy = 400;
+  //   arrows.dataset.x = dx;
+  //   arrows.dataset.y = dy;
+  //   arrows.style.setProperty('--x', `${dx}px`);
+  //   arrows.style.setProperty('--y', `${dy}px`);
+  // }
+  // roomElem.appendChild(arrows);
 
-  const food = document.createElement('div');
-  food.className = 't F';
-  {
-    const dx = 600;
-    const dy = 200;
-    food.dataset.x = dx;
-    food.dataset.y = dy;
-    food.style.setProperty('--x', `${dx}px`);
-    food.style.setProperty('--y', `${dy}px`);
-  }
-  roomElem.appendChild(food);
-
-  const arrows = document.createElement('div');
-  arrows.className = 't A';
-  {
-    const dx = 200;
-    const dy = 400;
-    arrows.dataset.x = dx;
-    arrows.dataset.y = dy;
-    arrows.style.setProperty('--x', `${dx}px`);
-    arrows.style.setProperty('--y', `${dy}px`);
-  }
-  roomElem.appendChild(arrows);
-
-  const holywater = document.createElement('div');
-  holywater.className = 't H';
-  {
-    const dx = 400;
-    const dy = 400;
-    holywater.dataset.x = dx;
-    holywater.dataset.y = dy;
-    holywater.style.setProperty('--x', `${dx}px`);
-    holywater.style.setProperty('--y', `${dy}px`);
-  }
-  roomElem.appendChild(holywater);
+  // const holywater = document.createElement('div');
+  // holywater.className = 't H';
+  // {
+  //   const dx = 400;
+  //   const dy = 400;
+  //   holywater.dataset.x = dx;
+  //   holywater.dataset.y = dy;
+  //   holywater.style.setProperty('--x', `${dx}px`);
+  //   holywater.style.setProperty('--y', `${dy}px`);
+  // }
+  // roomElem.appendChild(holywater);
 
   document.body.appendChild(roomElem);
 };
@@ -287,10 +276,9 @@ const space3 = {
 };
 
 createRoom([space]);
-createRoom([space2]);
-createRoom([space3]);
+// createRoom([space2]);
+// createRoom([space3]);
 
 wallsH = Array.from(document.querySelectorAll('.w.N, .w.S'));
 wallsV = Array.from(document.querySelectorAll('.w.E, .w.W'));
 walls = [...wallsH, ...wallsV];
-enemies = Array.from(document.querySelectorAll('.e'));
