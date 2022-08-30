@@ -187,7 +187,7 @@ const createRoom = spaces => {
   roomElem.appendChild(floorElem);
 
   const enemy = createEnemy('D', [200, 200], 5);
-  const enemy2 = createEnemy('D', [600, 400], 10);
+  const enemy2 = createEnemy('B', [600, 400], 10);
   enemies.push(enemy);
   enemies.push(enemy2);
   roomElem.appendChild(enemy.elem);

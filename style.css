@@ -11,6 +11,7 @@ body {
   margin: 0;
   overflow: hidden;
   background-color: black;
+  cursor: url(/assets/cursor/pointer.png) 7 7, auto;
 }
 
 * {
@@ -90,10 +91,19 @@ body {
 }
 
 .e {
-  animation-duration: 3s;
-  animation-name: action;
-  animation-iteration-count: infinite;
-  animation-delay: var(--d);
+  animation: move 3s var(--d) infinite;
+  cursor: url(/assets/cursor/auto.png) 7 7, pointer;
+}
+
+.e::before {
+  content: '';
+  height: 2px;
+  width: var(--hp);
+  background: red;
+  position: absolute;
+  top: var(--b);
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .e.D {
@@ -106,6 +116,7 @@ body {
   --h: 108px;
   --w: 60px;
   --ty: 92px;
+  --b: -5px;
 }
 
 .e.B {
@@ -117,7 +128,8 @@ body {
   --shot: 116px 36px/104px 44px url(/assets/bride/bride_bullet.png);
   --h: 124px;
   --w: 354px;
-  --ty: 0px;
+  --ty: 20px;
+  --b: 130px;
 }
 
 .e.V {
@@ -130,9 +142,10 @@ body {
   --h: 168px;
   --w: 156px;
   --ty: 32px;
+  --b: 15px;
 }
 
-@keyframes action {
+@keyframes move {
   0% {
     background: var(--static), var(--move1), var(--base);
   }
