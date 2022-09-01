@@ -9,6 +9,9 @@ const P_Y = 0;
 
 const player = {
   rot: 0,
+  hp: 100,
+  s: 10,
+  a: 10,
   posX: P_X,
   posY: P_Y,
 
@@ -89,6 +92,7 @@ const executeMoves = () => {
   document.documentElement.style.setProperty('--rot', `${player.rot}rad`);
   document.documentElement.style.setProperty('--posX', `${player.posX}px`);
   document.documentElement.style.setProperty('--posY', `${player.posY}px`);
+  document.getElementById('h').style.setProperty('--w', `${player.hp}%`);
 };
 
 const calculateShadow = () => {
@@ -186,12 +190,12 @@ const createRoom = spaces => {
   floorElem.style.setProperty('--y', `${my * 200}px`);
   roomElem.appendChild(floorElem);
 
-  const enemy = createEnemy('D', [200, 200], 5);
-  const enemy2 = createEnemy('B', [600, 400], 10);
+  const enemy = createEnemy('D', [200, 200], 5, 1);
   enemies.push(enemy);
-  enemies.push(enemy2);
   roomElem.appendChild(enemy.elem);
-  roomElem.appendChild(enemy2.elem);
+  // const enemy2 = createEnemy('D', [600, 400], 10);
+  // enemies.push(enemy2);
+  // roomElem.appendChild(enemy2.elem);
 
   // const food = document.createElement('div');
   // food.className = 't F';
@@ -229,7 +233,7 @@ const createRoom = spaces => {
   // }
   // roomElem.appendChild(holywater);
 
-  document.body.appendChild(roomElem);
+  document.getElementById('g').appendChild(roomElem);
 };
 
 const space = {

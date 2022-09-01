@@ -11,6 +11,7 @@ body {
   margin: 0;
   overflow: hidden;
   background-color: black;
+  height: 100vh;
   cursor: url(/assets/cursor/pointer.png) 7 7, auto;
 }
 
@@ -147,37 +148,37 @@ body {
 
 @keyframes move {
   0% {
-    background: var(--static), var(--move1), var(--base);
+    background: var(--shot), var(--move1), var(--base);
   }
   10% {
-    background: var(--static), var(--move2), var(--base);
+    background: var(--shot), var(--move2), var(--base);
   }
   20% {
     background: var(--static), var(--move1), var(--base);
   }
   30% {
-    background: var(--static), var(--move2), var(--base);
+    background: var(--static), var(--move1), var(--base);
   }
   40% {
-    background: var(--static), var(--move1), var(--base);
-  }
-  50% {
     background: var(--static), var(--move2), var(--base);
   }
+  50% {
+    background: var(--static), var(--move1), var(--base);
+  }
   60% {
-    background: var(--aim), var(--move1), var(--base);
+    background: var(--static), var(--move2), var(--base);
   }
   70% {
-    background: var(--aim), var(--move2), var(--base);
+    background: var(--static), var(--move1), var(--base);
   }
   80% {
-    background: var(--shot), var(--move1), var(--base);
+    background: var(--static), var(--move2), var(--base);
   }
   90% {
-    background: var(--shot), var(--move2), var(--base);
+    background: var(--aim), var(--move1), var(--base);
   }
   100% {
-    background: var(--static), var(--move1), var(--base);
+    background: var(--aim), var(--move2), var(--base);
   }
 }
 
@@ -204,4 +205,25 @@ body {
   --h: 46px;
   --w: 58px;
   --ty: 144px;
+}
+
+#i {
+  position: fixed;
+  inset: 10px;
+  top: unset;
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  color: white;
+  transform: translateZ(99999px);
+  user-select: none;
+  font-family: 'Lucida Sans', Arial, sans-serif;
+  font-size: 20px;
+  gap: 50px;
+}
+
+#h {
+  margin: 10px auto;
+  width: var(--w);
+  height: 5px;
+  background-color: red;
 }
