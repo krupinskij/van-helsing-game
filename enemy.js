@@ -1,6 +1,6 @@
 const calcDist = obj => {
   const distX = (Math.abs(player.posX - obj.x) - 90) / 200;
-  const distY = (Math.abs(600 - player.posY - obj.y) - 90) / 200;
+  const distY = (Math.abs(600 - player.y - obj.y) - 90) / 200;
   return Math.max(distX * distX + distY * distY, 1);
 };
 const createEnemy = (t, [x, y], speed, strength) => {

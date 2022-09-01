@@ -2,18 +2,43 @@ let walls = [];
 let wallsH = [];
 let wallsV = [];
 let enemies = [];
-let withShadow = [];
+let treats = [];
 
 const P_X = 500;
 const P_Y = 0;
 
 const player = {
   rot: 0,
-  hp: 100,
-  s: 10,
-  a: 10,
+  _hp: 80,
+  _s: 10,
+  _a: 10,
   posX: P_X,
   posY: P_Y,
+
+  get hp() {
+    return this._hp;
+  },
+  set hp(_hp) {
+    this._hp = Math.min(100, _hp);
+    document.getElementById('h').style.setProperty('--w', `${this._hp}%`);
+  },
+
+  get s() {
+    return this._s;
+  },
+  set s(_s) {
+    document.getElementById('s').innerText = _s;
+    this._s = _s;
+  },
+
+  get a() {
+    return this._a;
+  },
+  set a(_a) {
+    if (_a < 0) return;
+    document.getElementById('a').innerText = _a;
+    this._a = _a;
+  },
 
   moveDistH: t => {
     const dist = t * 10 * Math.cos(player.rot);
@@ -92,7 +117,6 @@ const executeMoves = () => {
   document.documentElement.style.setProperty('--rot', `${player.rot}rad`);
   document.documentElement.style.setProperty('--posX', `${player.posX}px`);
   document.documentElement.style.setProperty('--posY', `${player.posY}px`);
-  document.getElementById('h').style.setProperty('--w', `${player.hp}%`);
 };
 
 const calculateShadow = () => {
@@ -128,10 +152,35 @@ const executeEnemyMoves = () => {
   });
 };
 
+const getTreat = () => {
+  treats = treats.filter(({ obj, elem }) => {
+    const distX = player.posX - obj.x;
+    const distY = 600 - player.posY - obj.y;
+    if (Math.abs(distX) < 50 && Math.abs(distY) < 50) {
+      switch (obj.t) {
+        case 'A':
+          player.a += 10;
+          break;
+        case 'H':
+          player.s += 10;
+          break;
+        case 'F':
+          player.hp += 10;
+          break;
+      }
+      elem.parentNode.removeChild(elem);
+
+      return false;
+    }
+    return true;
+  });
+};
+
 const animate = () => {
   executeMoves();
   calculateShadow();
   executeEnemyMoves();
+  getTreat();
   window.requestAnimationFrame(animate);
 };
 window.requestAnimationFrame(animate);
@@ -190,9 +239,21 @@ const createRoom = spaces => {
   floorElem.style.setProperty('--y', `${my * 200}px`);
   roomElem.appendChild(floorElem);
 
-  const enemy = createEnemy('D', [200, 200], 5, 1);
-  enemies.push(enemy);
-  roomElem.appendChild(enemy.elem);
+  // const enemy = createEnemy('D', [200, 200], 5, 1);
+  // enemies.push(enemy);
+  // roomElem.appendChild(enemy.elem);
+
+  const treat = createTreat('A', [200, 200]);
+  treats.push(treat);
+  roomElem.appendChild(treat.elem);
+
+  const treat2 = createTreat('F', [400, 200]);
+  treats.push(treat2);
+  roomElem.appendChild(treat2.elem);
+
+  const treat3 = createTreat('H', [600, 200]);
+  treats.push(treat3);
+  roomElem.appendChild(treat3.elem);
   // const enemy2 = createEnemy('D', [600, 400], 10);
   // enemies.push(enemy2);
   // roomElem.appendChild(enemy2.elem);
@@ -286,3 +347,7 @@ createRoom([space]);
 wallsH = Array.from(document.querySelectorAll('.w.N, .w.S'));
 wallsV = Array.from(document.querySelectorAll('.w.E, .w.W'));
 walls = [...wallsH, ...wallsV];
+
+document.addEventListener('click', () => {
+  player.a--;
+});
