@@ -1,10 +1,9 @@
-const createTreat = (t, [x, y]) => {
-  const obj = { x, y, t };
+const createTreat = obj => {
   const elem = document.createElement('div');
-  elem.className = `t ${t}`;
+  elem.className = `t ${obj.t}`;
 
-  elem.style.setProperty('--x', `${x}px`);
-  elem.style.setProperty('--y', `${y}px`);
+  elem.style.setProperty('--x', `${obj.x}px`);
+  elem.style.setProperty('--y', `${obj.y}px`);
 
   return { elem, obj };
 };

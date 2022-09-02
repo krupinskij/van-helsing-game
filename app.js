@@ -9,7 +9,7 @@ const P_Y = 0;
 
 const player = {
   rot: 0,
-  _hp: 80,
+  _hp: 100,
   _s: 10,
   _a: 10,
   posX: P_X,
@@ -51,7 +51,16 @@ const player = {
       const isS = wall.classList.contains('S');
       const isD = wall.classList.contains('D');
       const pX = (player.posX + +wall.dataset.x) * (isS ? -1 : 1);
-      if (pX > -50 && +wall.dataset.w - pX > -50 && !isD) return;
+
+      if (pX > -50 && +wall.dataset.w - pX > -50) {
+        if (isD) {
+          player.posX = +wall.dataset.px;
+          player.posY = +wall.dataset.py;
+          document.getElementById('g').innerHTML = '';
+          createRoom(levels[0][+wall.dataset.r]);
+        }
+        return;
+      }
     }
 
     player.posY += dist;
@@ -66,7 +75,16 @@ const player = {
       const isE = wall.classList.contains('E');
       const isD = wall.classList.contains('D');
       const pY = (player.posY - 600 - +wall.dataset.y) * (isE ? -1 : 1);
-      if (pY > -50 && +wall.dataset.w - pY > -50 && !isD) return;
+
+      if (pY > -50 && +wall.dataset.w - pY > -50) {
+        if (isD) {
+          player.posX = +wall.dataset.px;
+          player.posY = +wall.dataset.py;
+          document.getElementById('g').innerHTML = '';
+          createRoom(levels[0][+wall.dataset.r]);
+        }
+        return;
+      }
     }
 
     player.posX += dist;
@@ -165,9 +183,11 @@ const getTreat = () => {
           player.s += 10;
           break;
         case 'F':
+          if (player.hp >= 100) return true;
           player.hp += 10;
           break;
       }
+      obj.g = true;
       elem.parentNode.removeChild(elem);
 
       return false;
@@ -185,50 +205,68 @@ const animate = () => {
 };
 window.requestAnimationFrame(animate);
 
-const createRoom = spaces => {
+const createRoom = room => {
+  walls = [];
+  wallsH = [];
+  wallsV = [];
+  treats = [];
+  enemies = enemies.filter(enemy => {
+    enemy.obj.stop();
+    return false;
+  });
   const roomElem = document.createElement('div');
   roomElem.className = 'r';
 
   let mh = (mw = mx = my = -Infinity);
-  spaces.forEach(space => {
-    let [x, y] = space.start;
+  let [x, y] = room.start;
 
-    let h = (w = 0);
-    space.walls.forEach(([len, dir, d = '']) => {
-      const wallElem = document.createElement('div');
-      wallElem.className = 'w ' + dir + d;
-      wallElem.dataset.x = x * 200;
-      wallElem.dataset.y = y * 200;
-      wallElem.dataset.w = len * 200;
+  let h = (w = 0);
+  room.walls.forEach(([len, dir, ...d]) => {
+    const wallElem = document.createElement('div');
+    wallElem.className = 'w ' + dir + (d[0] || '');
+    wallElem.dataset.x = x * 200;
+    wallElem.dataset.y = y * 200;
+    wallElem.dataset.w = len * 200;
+    if (d.length === 4) {
+      wallElem.dataset.r = d[1];
+      wallElem.dataset.px = d[2];
+      wallElem.dataset.py = d[3];
+    }
 
-      wallElem.style.width = `${len * 200}px`;
-      wallElem.style.setProperty('--x', `${x * 200}px`);
-      wallElem.style.setProperty('--y', `${y * 200}px`);
-      roomElem.appendChild(wallElem);
+    wallElem.style.width = `${len * 200}px`;
+    wallElem.style.setProperty('--x', `${x * 200}px`);
+    wallElem.style.setProperty('--y', `${y * 200}px`);
+    roomElem.appendChild(wallElem);
 
-      switch (dir) {
-        case 'N':
-          x -= len;
-          w += len;
-          break;
-        case 'S':
-          x += len;
-          break;
-        case 'E':
-          y -= len;
-          h += len;
-          break;
-        case 'W':
-          y += len;
-          break;
-      }
+    switch (dir) {
+      case 'N':
+        x -= len;
+        w += len;
+        wallsH.push(wallElem);
+        break;
+      case 'S':
+        x += len;
+        wallsH.push(wallElem);
+        break;
+      case 'E':
+        y -= len;
+        h += len;
+        wallsV.push(wallElem);
+        break;
+      case 'W':
+        y += len;
+        wallsV.push(wallElem);
+        break;
+    }
 
-      mx = Math.max(mx, x);
-      my = Math.max(my, y);
-    });
-    mh = Math.max(mh, h);
-    mw = Math.max(mw, w);
+    mx = Math.max(mx, x);
+    my = Math.max(my, y);
   });
+  mh = Math.max(mh, h);
+  mw = Math.max(mw, w);
+
+  walls = [...wallsH, ...wallsV];
+
   const floorElem = document.createElement('div');
   floorElem.className = 'f';
   floorElem.style.width = `${mw * 200}px`;
@@ -239,114 +277,25 @@ const createRoom = spaces => {
   floorElem.style.setProperty('--y', `${my * 200}px`);
   roomElem.appendChild(floorElem);
 
-  // const enemy = createEnemy('D', [200, 200], 5, 1);
-  // enemies.push(enemy);
-  // roomElem.appendChild(enemy.elem);
-
-  const treat = createTreat('A', [200, 200]);
-  treats.push(treat);
-  roomElem.appendChild(treat.elem);
-
-  const treat2 = createTreat('F', [400, 200]);
-  treats.push(treat2);
-  roomElem.appendChild(treat2.elem);
-
-  const treat3 = createTreat('H', [600, 200]);
-  treats.push(treat3);
-  roomElem.appendChild(treat3.elem);
-  // const enemy2 = createEnemy('D', [600, 400], 10);
-  // enemies.push(enemy2);
-  // roomElem.appendChild(enemy2.elem);
-
-  // const food = document.createElement('div');
-  // food.className = 't F';
-  // {
-  //   const dx = 600;
-  //   const dy = 200;
-  //   food.dataset.x = dx;
-  //   food.dataset.y = dy;
-  //   food.style.setProperty('--x', `${dx}px`);
-  //   food.style.setProperty('--y', `${dy}px`);
-  // }
-  // roomElem.appendChild(food);
-
-  // const arrows = document.createElement('div');
-  // arrows.className = 't A';
-  // {
-  //   const dx = 200;
-  //   const dy = 400;
-  //   arrows.dataset.x = dx;
-  //   arrows.dataset.y = dy;
-  //   arrows.style.setProperty('--x', `${dx}px`);
-  //   arrows.style.setProperty('--y', `${dy}px`);
-  // }
-  // roomElem.appendChild(arrows);
-
-  // const holywater = document.createElement('div');
-  // holywater.className = 't H';
-  // {
-  //   const dx = 400;
-  //   const dy = 400;
-  //   holywater.dataset.x = dx;
-  //   holywater.dataset.y = dy;
-  //   holywater.style.setProperty('--x', `${dx}px`);
-  //   holywater.style.setProperty('--y', `${dy}px`);
-  // }
-  // roomElem.appendChild(holywater);
+  room.treats?.forEach(treat => {
+    if (!treat.g) {
+      const cTreat = createTreat(treat);
+      treats.push(cTreat);
+      roomElem.appendChild(cTreat.elem);
+    }
+  });
+  room.enemies?.forEach(enemy => {
+    if (enemy.hp > 0) {
+      const cEnemy = createEnemy(enemy);
+      enemies.push(cEnemy);
+      roomElem.appendChild(cEnemy.elem);
+    }
+  });
 
   document.getElementById('g').appendChild(roomElem);
 };
 
-const space = {
-  start: [0, 0],
-  walls: [
-    [2, 'N'],
-    [1, 'N', ' D'],
-    [2, 'N'],
-    [5, 'E'],
-    [5, 'S'],
-    [5, 'W'],
-  ],
-  enemies: ['D'],
-};
-
-const space2 = {
-  start: [0, 5],
-  walls: [
-    [2, 'N'],
-    [1, 'E'],
-    [1, 'N'],
-    [1, 'W'],
-    [2, 'N'],
-    [2, 'E'],
-    [1, 'E', ' D'],
-    [2, 'E'],
-    [2, 'S'],
-    [1, 'S', ' D'],
-    [2, 'S'],
-    [5, 'W'],
-  ],
-};
-
-const space3 = {
-  start: [-5, 5],
-  walls: [
-    [5, 'N'],
-    [5, 'E'],
-    [5, 'S'],
-    [2, 'W'],
-    [1, 'W', ' D'],
-    [2, 'W'],
-  ],
-};
-
-createRoom([space]);
-// createRoom([space2]);
-// createRoom([space3]);
-
-wallsH = Array.from(document.querySelectorAll('.w.N, .w.S'));
-wallsV = Array.from(document.querySelectorAll('.w.E, .w.W'));
-walls = [...wallsH, ...wallsV];
+createRoom(levels[0][0]);
 
 document.addEventListener('click', () => {
   player.a--;
