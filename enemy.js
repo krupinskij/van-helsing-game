@@ -21,8 +21,8 @@ const createEnemy = obj => {
   const moveI = setInterval(() => {
     const distX = player.posX - obj.x;
     const distY = 600 - player.posY - obj.y;
-    if (Math.abs(distX) > 90) obj.x += obj.speed * (distX > 0 ? 1 : -1);
-    if (Math.abs(distY) > 90) obj.y += obj.speed * (distY > 0 ? 1 : -1);
+    if (Math.abs(distX) > 80) obj.x += obj.speed * (distX > 0 ? 1 : -1);
+    if (Math.abs(distY) > 80) obj.y += obj.speed * (distY > 0 ? 1 : -1);
   }, 100);
 
   let shotI;

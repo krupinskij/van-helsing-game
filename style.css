@@ -108,77 +108,83 @@ body {
 }
 
 .e.D {
-  --base: 3px 0px/54px 99px url(/assets/dwergi/base.png);
-  --move1: 12px 96px/36px 15px url(/assets/dwergi/footl.png);
-  --move2: 12px 96px/36px 15px url(/assets/dwergi/footr.png);
-  --static: 0 48px/60px 39px url(/assets/dwergi/static.png);
-  --aim: 0 48px/60px 27px url(/assets/dwergi/aim.png);
-  --shot: 0 48px/60px 27px url(/assets/dwergi/shot.png);
-  --h: 108px;
-  --w: 60px;
-  --ty: 92px;
+  --base: 3px 0px/66px 108px url(/assets/dwergi/base.png);
+  --move1: 12px 102px/48px 18px url(/assets/dwergi/footl.png);
+  --move2: 12px 102px/48px 18px url(/assets/dwergi/footr.png);
+  --static: 0px 42px/72px 45px url(/assets/dwergi/static.png);
+  --aim: 0 39px/72px 30px url(/assets/dwergi/aim.png);
+  --shot: 0 39px/72px 30px url(/assets/dwergi/shot.png);
+  --detail1: url();
+  --detail2: url();
+  --h: 120px;
+  --w: 72px;
+  --ty: 80px;
   --b: -5px;
 }
 
 .e.B {
-  --base: 84px 28px/192px 100px url(/assets/bride/bride_base.png);
-  --move1: 0px 0px/364px 114px url(/assets/bride/bride_wing-up.png);
-  --move2: 0px 0px/364px 114px url(/assets/bride/bride_wing-down.png);
-  --static: 116px 36px/104px 44px url();
-  --aim: 116px 36px/104px 44px url(/assets/bride/bride_shoot.png);
-  --shot: 116px 36px/104px 44px url(/assets/bride/bride_bullet.png);
-  --h: 124px;
-  --w: 354px;
+  --base: 124px 24px/84px 104px url(/assets/bride/bride_base.png);
+  --move1: 0px 0px/332px 108px url(/assets/bride/bride_wing-up.png);
+  --move2: 0px 0px/332px 108px url(/assets/bride/bride_wing-down.png);
+  --static: 112px 36px/108px 36px url();
+  --aim: 112px 36px/108px 36px url(/assets/bride/bride_shoot.png);
+  --shot: 112px 36px/108px 36px url(/assets/bride/bride_bullet.png);
+  --detail1: 108px 4px/88px 84px url(/assets/bride/hair-a-1.png);
+  --detail2: 108px 4px/88px 84px url(/assets/bride/hair-a-2.png);
+  --h: 128px;
+  --w: 332px;
   --ty: 20px;
   --b: 130px;
 }
 
 .e.V {
-  --base: 36px 24px/84px 141px url(/assets/dracula/dracula_base.png);
-  --move1: 15px 0px/126px 168px url(/assets/dracula/dracula_move-1.png);
-  --move2: 0px 0px/156px 168px url(/assets/dracula/dracula_move-2.png);
-  --static: 33px 66px/90px 30px url(/assets/dracula/dracula_noshoot.png);
-  --aim: 33px 27px/90px 42px url(/assets/dracula/dracula_shoot.png);
-  --shot: 30px 24px/96px 45px url(/assets/dracula/dracula_bullet.png);
-  --h: 168px;
-  --w: 156px;
-  --ty: 32px;
-  --b: 15px;
+  --base: 56px 24px/80px 156px url(/assets/dracula/dracula_base.png);
+  --move1: 0px 0px/192px 192px url(/assets/dracula/dracula_move-1.png);
+  --move2: 0px 0px/192px 192px url(/assets/dracula/dracula_move-2.png);
+  --static: 24px 24px/144px 92px url(/assets/dracula/dracula_noshoot.png);
+  --aim: 24px 24px/144px 92px url(/assets/dracula/dracula_shoot.png);
+  --shot: 24px 24px/144px 92px url(/assets/dracula/dracula_bullet.png);
+  --detail1: url();
+  --detail2: url();
+  --h: 192px;
+  --w: 192px;
+  --ty: 8px;
+  --b: 36px;
 }
 
 @keyframes move {
   0% {
-    background: var(--shot), var(--move1), var(--base);
+    background: var(--shot), var(--detail1), var(--base), var(--move1);
   }
   10% {
-    background: var(--shot), var(--move2), var(--base);
+    background: var(--shot), var(--detail2), var(--base), var(--move2);
   }
   20% {
-    background: var(--static), var(--move1), var(--base);
+    background: var(--static), var(--detail1), var(--base), var(--move1);
   }
   30% {
-    background: var(--static), var(--move1), var(--base);
+    background: var(--static), var(--detail2), var(--base), var(--move2);
   }
   40% {
-    background: var(--static), var(--move2), var(--base);
+    background: var(--static), var(--detail1), var(--base), var(--move1);
   }
   50% {
-    background: var(--static), var(--move1), var(--base);
+    background: var(--static), var(--detail2), var(--base), var(--move2);
   }
   60% {
-    background: var(--static), var(--move2), var(--base);
+    background: var(--static), var(--detail1), var(--base), var(--move1);
   }
   70% {
-    background: var(--static), var(--move1), var(--base);
+    background: var(--static), var(--detail2), var(--base), var(--move2);
   }
   80% {
-    background: var(--static), var(--move2), var(--base);
+    background: var(--static), var(--detail1), var(--base), var(--move1);
   }
   90% {
-    background: var(--aim), var(--move1), var(--base);
+    background: var(--aim), var(--detail2), var(--base), var(--move2);
   }
   100% {
-    background: var(--aim), var(--move2), var(--base);
+    background: var(--aim), var(--detail1), var(--base), var(--move1);
   }
 }
 
