@@ -8,6 +8,27 @@ const MAX_HP = {
   B: 400,
   V: 1000,
 };
+const shotMe = obj => {
+  playSong(shotSound);
+  const dist = calcDist(obj);
+  const { x: ax, y: ay } = obj;
+  const { posX: bx, posY: by } = player;
+  setTimeout(() => {
+    const { posX: cx, posY: cy } = player;
+    const dx = ax - cx;
+    const dy = ay - cy;
+    const ex = bx - cx;
+    const ey = by - cy;
+    const fx = bx - ax;
+    const fy = by - ay;
+    const d =
+      dx * fx >= 0 && dy * fy >= 0
+        ? 0
+        : Math.min(1 / Math.abs(dx * ey - ex * dy) / (fx * fx + fy * fy), 100) * obj.strength;
+    player.hp -= d / player.s;
+    playSong(killSound);
+  }, dist * 100);
+};
 const createEnemy = obj => {
   const elem = document.createElement('div');
   elem.className = `e ${obj.t}`;
@@ -27,27 +48,9 @@ const createEnemy = obj => {
 
   let shotI;
   const shotT = setTimeout(() => {
-    player.hp -= 10;
+    shotMe(obj);
     shotI = setInterval(() => {
-      playSong(shotSound);
-      const dist = calcDist(obj);
-      const { x: ax, y: ay } = obj;
-      const { posX: bx, posY: by } = player;
-      setTimeout(() => {
-        const { posX: cx, posY: cy } = player;
-        const dx = ax - cx;
-        const dy = ay - cy;
-        const ex = bx - cx;
-        const ey = by - cy;
-        const fx = bx - ax;
-        const fy = by - ay;
-        const d =
-          dx * fx >= 0 && dy * fy >= 0
-            ? 0
-            : Math.min(1 / Math.abs(dx * ey - ex * dy) / (fx * fx + fy * fy), 100) * obj.strength;
-        player.hp -= d / player.s;
-        playSong(killSound);
-      }, dist * 100);
+      shotMe(obj);
     }, 3000);
   }, 3000 - d * 1000);
 
