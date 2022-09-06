@@ -299,4 +299,5 @@ createRoom(levels[0][0]);
 
 document.addEventListener('click', () => {
   player.a--;
+  playSong(arrowSound);
 });

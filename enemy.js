@@ -29,6 +29,7 @@ const createEnemy = obj => {
   const shotT = setTimeout(() => {
     player.hp -= 10;
     shotI = setInterval(() => {
+      playSong(shotSound);
       const dist = calcDist(obj);
       const { x: ax, y: ay } = obj;
       const { posX: bx, posY: by } = player;
@@ -45,6 +46,7 @@ const createEnemy = obj => {
             ? 0
             : Math.min(1 / Math.abs(dx * ey - ex * dy) / (fx * fx + fy * fy), 100) * obj.strength;
         player.hp -= d / player.s;
+        playSong(killSound);
       }, dist * 100);
     }, 3000);
   }, 3000 - d * 1000);
@@ -56,6 +58,7 @@ const createEnemy = obj => {
     if (obj.hp <= 0) {
       obj.stop();
       elem.parentNode.removeChild(elem);
+      playSong(killSound);
     }
   });
 
