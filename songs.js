@@ -2,7 +2,7 @@ const bg = {
   songData: [
     {
       i: [
-        2, 192, 128, 0, 2, 192, 140, 18, 0, 0, 158, 119, 158, 0, 0, 0, 0, 0, 0, 0, 2, 5, 0, 0, 64,
+        2, 192, 128, 0, 2, 192, 140, 18, 0, 0, 158, 119, 158, 0, 0, 0, 0, 0, 0, 0, 2, 5, 0, 0, 128,
         0, 0, 24, 8,
       ],
       p: [1],
@@ -15,7 +15,7 @@ const bg = {
   numChannels: 1,
 };
 
-playSong(bg, true);
+playSound(bg, true);
 
 const arrowSound = {
   songData: [
@@ -60,6 +60,23 @@ const shotSound = {
       ],
       p: [1],
       c: [{ n: [134], f: [] }],
+    },
+  ],
+  rowLen: 5513,
+  patternLen: 10,
+  endPattern: 0,
+  numChannels: 1,
+};
+
+const treatSound = {
+  songData: [
+    {
+      i: [
+        2, 138, 116, 0, 2, 138, 128, 4, 0, 0, 47, 48, 128, 63, 124, 3, 0, 139, 4, 1, 2, 64, 160, 3,
+        200, 147, 4, 0, 5,
+      ],
+      p: [1],
+      c: [{ n: [170], f: [] }],
     },
   ],
   rowLen: 5513,

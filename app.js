@@ -7,11 +7,53 @@ let treats = [];
 const P_X = 500;
 const P_Y = 0;
 
+const controller = {
+  shift: {
+    pressed: false,
+  },
+  arrowleft: {
+    pressed: false,
+    action: () => {
+      player.rot -= 0.04;
+    },
+    shiftAction: () => {
+      player.moveDistV(-1, Math.cos);
+      player.moveDistH(1, Math.sin);
+    },
+  },
+  arrowright: {
+    pressed: false,
+    action: () => (player.rot += 0.04),
+    shiftAction: () => {
+      player.moveDistV(1, Math.cos);
+      player.moveDistH(-1, Math.sin);
+    },
+  },
+  arrowup: {
+    pressed: false,
+    action: () => {
+      player.moveDistV(1, Math.sin);
+      player.moveDistH(1, Math.cos);
+    },
+  },
+  arrowdown: {
+    pressed: false,
+    action: () => {
+      player.moveDistV(-1, Math.sin);
+      player.moveDistH(-1, Math.cos);
+    },
+  },
+};
+controller.a = { ...controller.arrowleft };
+controller.d = { ...controller.arrowright };
+controller.w = { ...controller.arrowup };
+controller.s = { ...controller.arrowdown };
+
 const player = {
   rot: 0,
   _hp: 100,
   _s: 10,
-  _a: 10,
+  _a: 100,
   posX: P_X,
   posY: P_Y,
 
@@ -40,8 +82,8 @@ const player = {
     this._a = _a;
   },
 
-  moveDistH: t => {
-    const dist = t * 10 * Math.cos(player.rot);
+  moveDistH: (t, tg) => {
+    const dist = t * 10 * tg(player.rot);
     for (let i = 0; i < wallsH.length; i++) {
       const wall = wallsH[i];
 
@@ -65,8 +107,8 @@ const player = {
 
     player.posY += dist;
   },
-  moveDistV: t => {
-    const dist = t * 10 * Math.sin(player.rot);
+  moveDistV: (t, tg) => {
+    const dist = t * 10 * tg(player.rot);
     for (let i = 0; i < wallsV.length; i++) {
       const wall = wallsV[i];
 
@@ -89,48 +131,26 @@ const player = {
 
     player.posX += dist;
   },
-
-  controller: {
-    ArrowLeft: {
-      pressed: false,
-      action: () => (player.rot -= 0.04),
-    },
-    ArrowRight: {
-      pressed: false,
-      action: () => (player.rot += 0.04),
-    },
-    ArrowUp: {
-      pressed: false,
-      action: () => {
-        player.moveDistV(1);
-        player.moveDistH(1);
-      },
-    },
-    ArrowDown: {
-      pressed: false,
-      action: () => {
-        player.moveDistV(-1);
-        player.moveDistH(-1);
-      },
-    },
-  },
 };
 
 document.addEventListener('keydown', event => {
-  if (player.controller[event.key]) {
-    player.controller[event.key].pressed = true;
+  const key = event.key.toLowerCase();
+  if (controller[key]) {
+    controller[key].pressed = true;
   }
 });
 
 document.addEventListener('keyup', event => {
-  if (player.controller[event.key]) {
-    player.controller[event.key].pressed = false;
+  const key = event.key.toLowerCase();
+  if (controller[key]) {
+    controller[key].pressed = false;
   }
 });
 
 const executeMoves = () => {
-  Object.keys(player.controller).forEach(key => {
-    player.controller[key].pressed && player.controller[key].action();
+  Object.keys(controller).forEach(key => {
+    controller[key].pressed &&
+      ((controller['shift'].pressed && controller[key].shiftAction) || controller[key].action)?.();
   });
   document.documentElement.style.setProperty('--rot', `${player.rot}rad`);
   document.documentElement.style.setProperty('--posX', `${player.posX}px`);
@@ -179,9 +199,6 @@ const getTreat = () => {
         case 'A':
           player.a += 10;
           break;
-        case 'H':
-          player.s += 10;
-          break;
         case 'F':
           if (player.hp >= 100) return true;
           player.hp += 10;
@@ -189,6 +206,7 @@ const getTreat = () => {
       }
       obj.g = true;
       elem.parentNode.removeChild(elem);
+      playSound(treatSound);
 
       return false;
     }
@@ -299,5 +317,5 @@ createRoom(levels[0][0]);
 
 document.addEventListener('click', () => {
   player.a--;
-  playSong(arrowSound);
+  playSound(arrowSound);
 });

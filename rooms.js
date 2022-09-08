@@ -12,7 +12,7 @@ const levels = [
       ],
       treats: [
         { x: 200, y: 200, t: 'A', g: false },
-        { x: 200, y: 400, t: 'H', g: false },
+        { x: 200, y: 400, t: 'F', g: false },
       ],
     },
     {
@@ -27,19 +27,33 @@ const levels = [
         [2, 'S'],
         [5, 'W'],
       ],
-      enemies: [{ x: 500, y: -300, hp: 100, speed: 5, strength: 1, t: 'D' }],
+      enemies: [{ x: 500, y: -600, hp: 100, speed: 5, strength: 1, t: 'D' }],
     },
     {
       start: [-5, 5],
       walls: [
-        [5, 'N'],
+        [2, 'N'],
+        [1, 'N', ' D', 3, 1500, 1700],
+        [2, 'N'],
         [5, 'E'],
         [5, 'S'],
         [2, 'W'],
         [1, 'W', ' D', 1, 900, 1100],
         [2, 'W'],
       ],
-      enemies: [{ x: 1400, y: -300, hp: 1000, speed: 10, strength: 10, t: 'V' }],
+      enemies: [{ x: 1600, y: -200, hp: 400, speed: 15, strength: 5, t: 'B' }],
+    },
+    {
+      start: [-5, 10],
+      walls: [
+        [5, 'N'],
+        [5, 'E'],
+        [2, 'S'],
+        [1, 'S', ' D', 2, 1500, 1500],
+        [2, 'S'],
+        [5, 'W'],
+      ],
+      enemies: [{ x: 1500, y: -1800, hp: 1000, speed: 10, strength: 10, t: 'V' }],
     },
   ],
 ];

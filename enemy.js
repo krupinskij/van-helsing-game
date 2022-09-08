@@ -8,8 +8,13 @@ const MAX_HP = {
   B: 400,
   V: 1000,
 };
+const S = {
+  D: 10,
+  B: 50,
+  V: 0,
+};
 const shotMe = obj => {
-  playSong(shotSound);
+  playSound(shotSound);
   const dist = calcDist(obj);
   const { x: ax, y: ay } = obj;
   const { posX: bx, posY: by } = player;
@@ -26,7 +31,7 @@ const shotMe = obj => {
         ? 0
         : Math.min(1 / Math.abs(dx * ey - ex * dy) / (fx * fx + fy * fy), 100) * obj.strength;
     player.hp -= d / player.s;
-    playSong(killSound);
+    playSound(killSound);
   }, dist * 100);
 };
 const createEnemy = obj => {
@@ -60,8 +65,9 @@ const createEnemy = obj => {
     elem.style.setProperty('--hp', `${(50 * obj.hp) / MAX_HP[obj.t]}px`);
     if (obj.hp <= 0) {
       obj.stop();
+      player.s += S[obj.t];
       elem.parentNode.removeChild(elem);
-      playSong(killSound);
+      playSound(killSound);
     }
   });
 

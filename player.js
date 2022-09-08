@@ -266,7 +266,7 @@ class CPlayer {
   }
 }
 
-const playSong = (song, loop = false) => {
+const playSound = (song, loop = false) => {
   const cplayer = new CPlayer();
   cplayer.init(song);
   cplayer.generate();
