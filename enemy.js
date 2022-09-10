@@ -9,8 +9,8 @@ const MAX_HP = {
   V: 1000,
 };
 const S = {
-  D: 10,
-  B: 50,
+  D: 1,
+  B: 10,
   V: 0,
 };
 const shotMe = obj => {

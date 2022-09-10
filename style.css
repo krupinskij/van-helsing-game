@@ -41,6 +41,7 @@ body {
 }
 
 .w {
+  --i: url(./assets/wall.png);
   position: absolute;
   display: flex;
   justify-content: center;
@@ -49,21 +50,33 @@ body {
   height: 300px;
   transform-origin: 0;
   background: linear-gradient(to left, rgba(0, 0, 0, var(--sAL, 0)), rgba(0, 0, 0, var(--sAR, 0))),
-    url(./assets/wall.png) repeat;
+    var(--i) repeat;
 
   --translate: translateZ(var(--pers)) rotateY(var(--rot)) translateZ(calc(-1 * var(--pers)))
     translateX(calc(-1 * var(--posX))) translateY(-100px) translateZ(var(--posY));
+}
+.w.F {
+  --i: url(./assets/fwall.png);
 }
 
 .w.D::before {
   position: absolute;
   content: '';
-  inset: 20px;
-  top: 70px;
-  bottom: -20px;
+  inset: 10px;
+  top: 50px;
+  bottom: -90px;
   border: 1px solid white;
   border-radius: 5px;
-  background-color: black;
+  background: black;
+}
+
+.w.G::before {
+  border-radius: 99px;
+  border: 5px solid gold;
+}
+
+.w.C::before {
+  background: transparent;
 }
 
 .w.N {

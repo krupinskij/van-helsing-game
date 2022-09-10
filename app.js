@@ -5,7 +5,7 @@ let enemies = [];
 let treats = [];
 
 const P_X = 500;
-const P_Y = 0;
+const P_Y = -300;
 
 const controller = {
   shift: {
@@ -53,7 +53,7 @@ const player = {
   rot: 0,
   _hp: 100,
   _s: 10,
-  _a: 100,
+  _a: 20,
   posX: P_X,
   posY: P_Y,
 
@@ -91,7 +91,7 @@ const player = {
       if (Math.abs(pY - +wall.dataset.y + dist) > 50) continue;
 
       const isS = wall.classList.contains('S');
-      const isD = wall.classList.contains('D');
+      const isD = wall.classList.contains('D') && !wall.classList.contains('C');
       const pX = (player.posX + +wall.dataset.x) * (isS ? -1 : 1);
 
       if (pX > -50 && +wall.dataset.w - pX > -50) {
@@ -99,7 +99,7 @@ const player = {
           player.posX = +wall.dataset.px;
           player.posY = +wall.dataset.py;
           document.getElementById('g').innerHTML = '';
-          createRoom(levels[0][+wall.dataset.r]);
+          createRoom(levels[+wall.dataset.r]);
         }
         return;
       }
@@ -115,7 +115,7 @@ const player = {
       if (Math.abs(player.posX + +wall.dataset.x + dist) > 50) continue;
 
       const isE = wall.classList.contains('E');
-      const isD = wall.classList.contains('D');
+      const isD = wall.classList.contains('D') && !wall.classList.contains('C');
       const pY = (player.posY - 600 - +wall.dataset.y) * (isE ? -1 : 1);
 
       if (pY > -50 && +wall.dataset.w - pY > -50) {
@@ -123,7 +123,7 @@ const player = {
           player.posX = +wall.dataset.px;
           player.posY = +wall.dataset.py;
           document.getElementById('g').innerHTML = '';
-          createRoom(levels[0][+wall.dataset.r]);
+          createRoom(levels[+wall.dataset.r]);
         }
         return;
       }
@@ -236,12 +236,12 @@ const createRoom = room => {
   roomElem.className = 'r';
 
   let mh = (mw = mx = my = -Infinity);
-  let [x, y] = room.start;
+  let x = (y = 0);
 
   let h = (w = 0);
   room.walls.forEach(([len, dir, ...d]) => {
     const wallElem = document.createElement('div');
-    wallElem.className = 'w ' + dir + (d[0] || '');
+    wallElem.className = 'w ' + dir + (d[0] || '') + (room.f ? ' F' : '');
     wallElem.dataset.x = x * 200;
     wallElem.dataset.y = y * 200;
     wallElem.dataset.w = len * 200;
@@ -313,7 +313,7 @@ const createRoom = room => {
   document.getElementById('g').appendChild(roomElem);
 };
 
-createRoom(levels[0][0]);
+createRoom(levels[0]);
 
 document.addEventListener('click', () => {
   player.a--;
