@@ -99,6 +99,11 @@ body.L::before {
   border: 5px solid gold;
 }
 
+.w.R::before {
+  border-radius: 99px;
+  border: 5px solid darkred;
+}
+
 .w.C::before {
   background: transparent;
 }
