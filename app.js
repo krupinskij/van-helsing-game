@@ -862,7 +862,7 @@ const createEnemy = obj => {
   elem.className = `e ${obj.t}`;
   elem.style.setProperty('--x', `${obj.x}px`);
   elem.style.setProperty('--y', `${obj.y}px`);
-  elem.style.setProperty('--hp', `${(50 * obj.hp) / MAX_HP[obj.t]}px`);
+  elem.style.setProperty('--l', `${(50 * obj.hp) / MAX_HP[obj.t]}px`);
 
   const d = Math.random() * 3;
   elem.style.setProperty('--d', `-${d}s`);
@@ -892,7 +892,7 @@ const createEnemy = obj => {
     if (player.a <= 0) return;
     const dist = Math.max(calcDist(obj), 1);
     obj.hp -= player.s / dist;
-    elem.style.setProperty('--hp', `${(50 * obj.hp) / MAX_HP[obj.t]}px`);
+    elem.style.setProperty('--l', `${(50 * obj.hp) / MAX_HP[obj.t]}px`);
     if (obj.hp <= 0) {
       obj.stop();
       player.s += S[obj.t];
@@ -1080,9 +1080,9 @@ const executeMoves = () => {
     controller[key].pressed &&
       ((controller['shift'].pressed && controller[key].shiftAction) || controller[key].action)?.();
   });
-  document.documentElement.style.setProperty('--rot', `${player.rot}rad`);
-  document.documentElement.style.setProperty('--posX', `${player.posX}px`);
-  document.documentElement.style.setProperty('--posY', `${player.posY}px`);
+  document.documentElement.style.setProperty('--R', `${player.rot}rad`);
+  document.documentElement.style.setProperty('--X', `${player.posX}px`);
+  document.documentElement.style.setProperty('--Y', `${player.posY}px`);
 };
 
 const calculateShadow = () => {
