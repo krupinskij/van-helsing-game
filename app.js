@@ -56,13 +56,14 @@ const player = {
   _a: 20,
   posX: P_X,
   posY: P_Y,
+  block: false,
 
   get hp() {
     return this._hp;
   },
   set hp(_hp) {
-    if (_hp <= 0) alert('You are dead!');
-    this._hp = Math.min(100, _hp);
+    if (_hp <= 0) handleLose();
+    this._hp = Math.max(Math.min(100, _hp), 0);
     document.getElementById('h').style.setProperty('--w', `${this._hp}%`);
   },
 
@@ -78,7 +79,8 @@ const player = {
     return this._a;
   },
   set a(_a) {
-    if (_a < 0) return;
+    if (_a < 0 || player.block) return;
+    playSound(arrowSound);
     document.getElementById('a').innerText = _a;
     this._a = _a;
   },
@@ -148,6 +150,7 @@ document.addEventListener('keyup', event => {
 });
 
 const executeMoves = () => {
+  if (player.block) return;
   Object.keys(controller).forEach(key => {
     controller[key].pressed &&
       ((controller['shift'].pressed && controller[key].shiftAction) || controller[key].action)?.();
@@ -317,18 +320,28 @@ const createRoom = room => {
 createRoom(rooms[0]);
 
 document.addEventListener('click', () => {
-  if (player.a <= 0) return;
   player.a--;
-  playSound(arrowSound);
 });
 
 const resetGame = () => {
   rooms = JSON.parse(roomsBU);
+  player.block = false;
   player.s = 10;
   player.hp = 100;
   player.a = 20;
   player.rot = 0;
   player.posX = P_X;
   player.posY = P_Y;
+  document.body.classList = '';
   createRoom(rooms[0]);
+};
+
+const handleWin = () => {
+  document.body.classList = 'W';
+  player.block = true;
+};
+
+const handleLose = () => {
+  document.body.classList = 'L';
+  player.block = true;
 };

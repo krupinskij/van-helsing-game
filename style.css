@@ -13,6 +13,30 @@ body {
   background-color: black;
   height: 100vh;
   cursor: url(/assets/cursor/pointer.png) 7 7, auto;
+  position: relative;
+  font-family: 'Lucida Sans', Arial, sans-serif;
+}
+
+body::before {
+  white-space: pre;
+  position: absolute;
+  inset: 0;
+  place-items: center;
+  transform: translateZ(99999px);
+  background: #000d;
+  color: #fff;
+  text-align: center;
+  display: none;
+}
+
+body.W::before {
+  content: 'You won!\APress [Esc] to play again';
+  display: grid;
+}
+
+body.L::before {
+  content: 'You lost!\APress [Esc] to play again';
+  display: grid;
 }
 
 * {
@@ -235,7 +259,6 @@ body {
   color: white;
   transform: translateZ(99999px);
   user-select: none;
-  font-family: 'Lucida Sans', Arial, sans-serif;
   font-size: 20px;
   gap: 50px;
 }

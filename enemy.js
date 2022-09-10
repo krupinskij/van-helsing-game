@@ -75,6 +75,8 @@ const createEnemy = obj => {
       player.s += S[obj.t];
       elem.parentNode.removeChild(elem);
       playSound(killSound);
+
+      if (obj.t === 'V') handleWin();
     }
   });
 
