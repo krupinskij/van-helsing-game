@@ -61,6 +61,7 @@ const player = {
     return this._hp;
   },
   set hp(_hp) {
+    if (_hp <= 0) alert('You are dead!');
     this._hp = Math.min(100, _hp);
     document.getElementById('h').style.setProperty('--w', `${this._hp}%`);
   },
@@ -98,8 +99,7 @@ const player = {
         if (isD) {
           player.posX = +wall.dataset.px;
           player.posY = +wall.dataset.py;
-          document.getElementById('g').innerHTML = '';
-          createRoom(levels[+wall.dataset.r]);
+          createRoom(rooms[+wall.dataset.r]);
         }
         return;
       }
@@ -122,8 +122,7 @@ const player = {
         if (isD) {
           player.posX = +wall.dataset.px;
           player.posY = +wall.dataset.py;
-          document.getElementById('g').innerHTML = '';
-          createRoom(levels[+wall.dataset.r]);
+          createRoom(rooms[+wall.dataset.r]);
         }
         return;
       }
@@ -135,6 +134,7 @@ const player = {
 
 document.addEventListener('keydown', event => {
   const key = event.key.toLowerCase();
+  if (key === 'escape') resetGame();
   if (controller[key]) {
     controller[key].pressed = true;
   }
@@ -224,6 +224,7 @@ const animate = () => {
 window.requestAnimationFrame(animate);
 
 const createRoom = room => {
+  document.getElementById('g').innerHTML = '';
   walls = [];
   wallsH = [];
   wallsV = [];
@@ -313,9 +314,21 @@ const createRoom = room => {
   document.getElementById('g').appendChild(roomElem);
 };
 
-createRoom(levels[0]);
+createRoom(rooms[0]);
 
 document.addEventListener('click', () => {
+  if (player.a <= 0) return;
   player.a--;
   playSound(arrowSound);
 });
+
+const resetGame = () => {
+  rooms = JSON.parse(roomsBU);
+  player.s = 10;
+  player.hp = 100;
+  player.a = 20;
+  player.rot = 0;
+  player.posX = P_X;
+  player.posY = P_Y;
+  createRoom(rooms[0]);
+};

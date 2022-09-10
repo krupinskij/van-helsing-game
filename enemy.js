@@ -6,7 +6,7 @@ const calcDist = obj => {
 const MAX_HP = {
   D: 100,
   B: 400,
-  V: 1000,
+  V: 2000,
 };
 const S = {
   D: 1,
@@ -66,6 +66,7 @@ const createEnemy = obj => {
   }, 3000 - d * 1000);
 
   elem.addEventListener('click', () => {
+    if (player.a <= 0) return;
     const dist = Math.max(calcDist(obj), 1);
     obj.hp -= player.s / dist;
     elem.style.setProperty('--hp', `${(50 * obj.hp) / MAX_HP[obj.t]}px`);

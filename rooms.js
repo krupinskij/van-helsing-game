@@ -1,4 +1,4 @@
-const levels = [
+let rooms = [
   {
     // 0
     walls: [
@@ -38,13 +38,6 @@ const levels = [
       [2, 'S'],
       [5, 'W'],
     ],
-    treats: [
-      { x: -100, y: -100, t: 'A', g: false },
-      { x: 100, y: -100, t: 'A', g: false },
-      { x: 0, y: 0, t: 'F', g: false },
-      { x: -100, y: 100, t: 'A', g: false },
-      { x: 100, y: 100, t: 'A', g: false },
-    ],
   },
   {
     // 3
@@ -59,6 +52,13 @@ const levels = [
       [2, 'W'],
       [1, 'W', ' D', 7, 400, 600],
       [2, 'W'],
+    ],
+    treats: [
+      { x: -100, y: -100, t: 'A', g: false },
+      { x: 100, y: -100, t: 'A', g: false },
+      { x: 0, y: 0, t: 'F', g: false },
+      { x: -100, y: 100, t: 'A', g: false },
+      { x: 100, y: 100, t: 'A', g: false },
     ],
   },
   {
@@ -201,11 +201,15 @@ const levels = [
       [5, 'W'],
       [5, 'W'],
     ],
-    enemies: [{ x: 800, y: -800, hp: 400, speed: 15, strength: 100, t: 'B', j: true }],
+    enemies: [{ x: 800, y: -800, hp: 400, speed: 15, strength: 5, t: 'B', j: true }],
     treats: [
       { x: -800, y: -800, t: 'F', g: false },
       { x: 800, y: -800, t: 'F', g: false },
+      { x: -100, y: -100, t: 'A', g: false },
+      { x: -100, y: 100, t: 'A', g: false },
       { x: 0, y: 0, t: 'A', g: false },
+      { x: 100, y: -100, t: 'A', g: false },
+      { x: 100, y: 100, t: 'A', g: false },
       { x: -800, y: 800, t: 'F', g: false },
       { x: 800, y: 800, t: 'F', g: false },
     ],
@@ -328,11 +332,7 @@ const levels = [
       { x: -100, y: 100, t: 'F', g: false },
       { x: 100, y: 100, t: 'F', g: false },
     ],
-    enemies: [
-      { x: 900, y: -300, hp: 100, speed: 5, strength: 1, t: 'D' },
-      { x: 900, y: 0, hp: 400, speed: 15, strength: 100, t: 'B' },
-      { x: 900, y: 300, hp: 100, speed: 5, strength: 1, t: 'D' },
-    ],
+    enemies: [{ x: 900, y: 0, hp: 400, speed: 15, strength: 20, t: 'B' }],
   },
 
   {
@@ -394,7 +394,11 @@ const levels = [
       [2, 'S'],
       [5, 'W'],
     ],
-    enemies: [{ x: 0, y: 0, hp: 400, speed: 15, strength: 100, t: 'B' }],
+    enemies: [
+      { x: -400, y: 400, hp: 100, speed: 5, strength: 1, t: 'D' },
+      { x: 0, y: -200, hp: 400, speed: 15, strength: 20, t: 'B' },
+      { x: 400, y: 400, hp: 100, speed: 5, strength: 1, t: 'D' },
+    ],
   },
   {
     // 24
@@ -416,6 +420,10 @@ const levels = [
       { x: -200, y: 200, t: 'F', g: false },
       { x: 0, y: 200, t: 'A', g: false },
       { x: 200, y: 200, t: 'F', g: false },
+      { x: -400, y: -400, t: 'A', g: false },
+      { x: -400, y: 400, t: 'A', g: false },
+      { x: 400, y: -400, t: 'A', g: false },
+      { x: 400, y: 400, t: 'A', g: false },
     ],
   },
   {
@@ -428,6 +436,18 @@ const levels = [
       [7, 'S'],
       [7, 'W'],
     ],
-    enemies: [{ x: 200, y: 0, hp: 1000, speed: 10, strength: 400, t: 'V' }],
+    enemies: [{ x: 200, y: 0, hp: 2000, speed: 10, strength: 200, t: 'V' }],
+    treats: [
+      { x: -600, y: -600, t: 'F', g: false },
+      { x: -600, y: 600, t: 'F', g: false },
+      { x: 600, y: -600, t: 'F', g: false },
+      { x: 600, y: 600, t: 'F', g: false },
+      { x: 0, y: -600, t: 'A', g: false },
+      { x: 0, y: 600, t: 'A', g: false },
+      { x: -600, y: 0, t: 'A', g: false },
+      { x: 600, y: 0, t: 'A', g: false },
+    ],
   },
 ];
+
+const roomsBU = JSON.stringify(rooms);
