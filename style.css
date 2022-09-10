@@ -29,7 +29,7 @@ body {
   background: radial-gradient(
       farthest-corner at calc(var(--x) + var(--posX)) calc(var(--pers) + var(--y) - var(--posY)),
       #0000,
-      #000f 1000px
+      #000f 1500px
     ),
     url(./assets/floor.png);
   transform-origin: 0;

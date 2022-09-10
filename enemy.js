@@ -50,6 +50,12 @@ const createEnemy = obj => {
     if (Math.abs(distX) > 80) obj.x += obj.speed * (distX > 0 ? 1 : -1);
     if (Math.abs(distY) > 80) obj.y += obj.speed * (distY > 0 ? 1 : -1);
   }, 100);
+  const jumpI =
+    obj.j &&
+    setInterval(() => {
+      obj.x = -obj.x;
+      obj.y = -obj.y;
+    }, 15000);
 
   let shotI;
   const shotT = setTimeout(() => {
@@ -75,6 +81,7 @@ const createEnemy = obj => {
     clearInterval(shotT);
     clearInterval(shotI);
     clearInterval(moveI);
+    if (obj.j) clearInterval(jumpI);
   };
 
   return { elem, obj };

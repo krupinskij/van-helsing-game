@@ -4,8 +4,8 @@ let wallsV = [];
 let enemies = [];
 let treats = [];
 
-const P_X = 500;
-const P_Y = -300;
+const P_X = 0;
+const P_Y = 200;
 
 const controller = {
   shift: {
@@ -236,7 +236,7 @@ const createRoom = room => {
   roomElem.className = 'r';
 
   let mh = (mw = mx = my = -Infinity);
-  let x = (y = 0);
+  let [x, y] = room.start || [2.5, 2.5];
 
   let h = (w = 0);
   room.walls.forEach(([len, dir, ...d]) => {
