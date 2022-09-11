@@ -1,213 +1,196 @@
-class CPlayer {
+let M = Math, I = Int32Array, U = Uint8Array, D = document
+M.s = M.sin;
+M.c = M.cos;
+M.r = M.random;
+M.a = M.abs;
+M.t = M.max;
+M.b = M.min;
+D.c = D.createElement;
+D.g = document.getElementById;
+D.a = document.addEventListener;
+class P {
   constructor() {
-    var osc_sin = function (value) {
-      return Math.sin(value * 6.283184);
+    let o1 = (v) => M.s(v*M.PI*2)
+    let o2 = (v) => 2 * (v % 1) - 1;
+    let o3 = (v) => v % 1 < 0.5 ? 1 : -1;
+    let o4 = (v) => {
+      let x = (v % 1) * 4;
+      return x < 2 ? x - 1 : 3 - x;
     };
 
-    var osc_saw = function (value) {
-      return 2 * (value % 1) - 1;
-    };
+    let g = (n) => 0.003959503758 * 2 ** ((n - 128) / 12);
 
-    var osc_square = function (value) {
-      return value % 1 < 0.5 ? 1 : -1;
-    };
-
-    var osc_tri = function (value) {
-      var v2 = (value % 1) * 4;
-      if (v2 < 2) return v2 - 1;
-      return 3 - v2;
-    };
-
-    var getnotefreq = function (n) {
-      return 0.003959503758 * 2 ** ((n - 128) / 12);
-    };
-
-    var createNote = function (instr, n, rowLen) {
-      var osc1 = mOscillators[instr.i[0]],
-        o1vol = instr.i[1],
-        o1xenv = instr.i[3] / 32,
-        osc2 = mOscillators[instr.i[4]],
-        o2vol = instr.i[5],
-        o2xenv = instr.i[8] / 32,
-        noiseVol = instr.i[9],
-        attack = instr.i[10] * instr.i[10] * 4,
-        sustain = instr.i[11] * instr.i[11] * 4,
-        release = instr.i[12] * instr.i[12] * 4,
-        releaseInv = 1 / release,
-        expDecay = -instr.i[13] / 16,
-        arp = instr.i[14],
-        arpInterval = rowLen * 2 ** (2 - instr.i[15]);
-
-      var noteBuf = new Int32Array(attack + sustain + release);
-
-      var c1 = 0,
+    let c = (i, n, l) => {
+      let o1 = o[i.i[0]],
+        o1v = i.i[1],
+        o1x = i.i[3] / 32,
+        o2 = o[i.i[4]],
+        o2v = i.i[5],
+        o2x = i.i[8] / 32,
+        nv = i.i[9],
+        a = i.i[10] * i.i[10] * 4,
+        s = i.i[11] * i.i[11] * 4,
+        r = i.i[12] * i.i[12] * 4,
+        ri = 1 / r,
+        ed = -i.i[13] / 16,
+        ar = i.i[14],
+        ai = l * 2 ** (2 - i.i[15]),
+        nb = new I(a + s + r),
+        c1 = 0,
         c2 = 0;
 
-      var j, j2, e, t, rsample, o1t, o2t;
+      let j, j2, e, rs, o1t, o2t;
 
-      for (j = 0, j2 = 0; j < attack + sustain + release; j++, j2++) {
+      for (j = 0, j2 = 0; j < a + s + r; j++, j2++) {
         if (j2 >= 0) {
-          arp = (arp >> 8) | ((arp & 255) << 4);
-          j2 -= arpInterval;
+          ar = (ar >> 8) | ((ar & 255) << 4);
+          j2 -= ai;
 
-          o1t = getnotefreq(n + (arp & 15) + instr.i[2] - 128);
-          o2t = getnotefreq(n + (arp & 15) + instr.i[6] - 128) * (1 + 0.0008 * instr.i[7]);
+          o1t = g(n + (ar & 15) + i.i[2] - 128);
+          o2t = g(n + (ar & 15) + i.i[6] - 128) * (1 + 0.0008 * i.i[7]);
         }
 
         e = 1;
-        if (j < attack) {
-          e = j / attack;
-        } else if (j >= attack + sustain) {
-          e = (j - attack - sustain) * releaseInv;
-          e = (1 - e) * 3 ** (expDecay * e);
+        if (j < a) {
+          e = j / a;
+        } else if (j >= a + s) {
+          e = (j - a - s) * ri;
+          e = (1 - e) * 3 ** (ed * e);
         }
 
-        c1 += o1t * e ** o1xenv;
-        rsample = osc1(c1) * o1vol;
+        c1 += o1t * e ** o1x;
+        rs = o1(c1) * o1v;
 
-        c2 += o2t * e ** o2xenv;
-        rsample += osc2(c2) * o2vol;
+        c2 += o2t * e ** o2x;
+        rs += o2(c2) * o2v;
 
-        if (noiseVol) {
-          rsample += (2 * Math.random() - 1) * noiseVol;
+        if (nv) {
+          rs += (2 * M.r() - 1) * nv;
         }
 
-        noteBuf[j] = (80 * rsample * e) | 0;
+        nb[j] = (80 * rs * e) | 0;
       }
 
-      return noteBuf;
+      return nb;
     };
 
-    var mOscillators = [osc_sin, osc_square, osc_saw, osc_tri];
+    let o = [o1, o3, o2, o4];
 
-    var mSong, mLastRow, mCurrentCol, mNumWords, mMixBuf;
+    let ms, ml, mc, mn, mm;
 
-    this.init = function (song) {
-      mSong = song;
+    this.i = s => {
+      ms = s;
 
-      mLastRow = song.endPattern;
-      mCurrentCol = 0;
+      ml = s.e;
+      mc = 0;
 
-      mNumWords = song.rowLen * song.patternLen * (mLastRow + 1) * 2;
+      mn = s.l * s.pl * (ml + 1) * 2;
 
-      mMixBuf = new Int32Array(mNumWords);
+      mm = new I(mn);
     };
 
-    this.generate = function () {
-      var i, j, b, p, row, col, n, cp, k, t, lfor, e, x, rsample, rowStartSample, f, da;
+    this.g =  () => {
+      let cb = new I(mn),
+        i = ms.d[mc],
+        l = ms.l,
+        pl = ms.pl,
+        lo = 0,
+        b = 0,
+        h,ls,
+        fa = 0,nc = [];
 
-      var chnBuf = new Int32Array(mNumWords),
-        instr = mSong.songData[mCurrentCol],
-        rowLen = mSong.rowLen,
-        patternLen = mSong.patternLen;
+      for (let p = 0; p <= ml; ++p) {
+        let cp = i.p[p];
 
-      var low = 0,
-        band = 0,
-        high;
-      var lsample,
-        filterActive = false;
+        for (let r = 0; r < pl; ++r) {
+          let cn = cp ? i.c[cp - 1].f[r] : 0;
+          if (cn) {
+            i.i[cn - 1] = i.c[cp - 1].f[r + pl] || 0;
 
-      var noteCache = [];
-
-      for (p = 0; p <= mLastRow; ++p) {
-        cp = instr.p[p];
-
-        for (row = 0; row < patternLen; ++row) {
-          var cmdNo = cp ? instr.c[cp - 1].f[row] : 0;
-          if (cmdNo) {
-            instr.i[cmdNo - 1] = instr.c[cp - 1].f[row + patternLen] || 0;
-
-            if (cmdNo < 17) {
-              noteCache = [];
+            if (cn < 17) {
+              nc = [];
             }
           }
 
-          var oscLFO = mOscillators[instr.i[16]],
-            lfoAmt = instr.i[17] / 512,
-            lfoFreq = 2 ** (instr.i[18] - 9) / rowLen,
-            fxLFO = instr.i[19],
-            fxFilter = instr.i[20],
-            fxFreq = (instr.i[21] * 43.23529 * 3.141592) / 44100,
-            q = 1 - instr.i[22] / 255,
-            dist = instr.i[23] * 1e-5,
-            drive = instr.i[24] / 32,
-            panAmt = instr.i[25] / 512,
-            panFreq = (6.283184 * 2 ** (instr.i[26] - 9)) / rowLen,
-            dlyAmt = instr.i[27] / 255,
-            dly = (instr.i[28] * rowLen) & ~1;
-          rowStartSample = (p * patternLen + row) * rowLen;
+          let ol = o[i.i[16]],
+            ff = i.i[20],
+            d = i.i[23] * 1e-5,
+            dl = (i.i[28] * l) & ~1,
+            rt = (p * pl + r) * l;
 
-          for (col = 0; col < 4; ++col) {
-            n = cp ? instr.c[cp - 1].n[row + col * patternLen] : 0;
+          for (let co = 0; co < 4; ++co) {
+            let n = cp ? i.c[cp - 1].n[r + co * pl] : 0;
             if (n) {
-              if (!noteCache[n]) {
-                noteCache[n] = createNote(instr, n, rowLen);
+              if (!nc[n]) {
+                nc[n] = c(i, n, l);
               }
 
-              var noteBuf = noteCache[n];
-              for (j = 0, i = rowStartSample * 2; j < noteBuf.length; j++, i += 2) {
-                chnBuf[i] += noteBuf[j];
+              var nb = nc[n];
+              for (let j = 0, i = rt * 2; j < nb.length; j++, i += 2) {
+                cb[i] += nb[j];
               }
             }
           }
 
-          for (j = 0; j < rowLen; j++) {
-            k = (rowStartSample + j) * 2;
-            rsample = chnBuf[k];
+          for (let j = 0; j < l; j++) {
+            let k = (rt + j) * 2;
+            let rs = cb[k];
 
-            if (rsample || filterActive) {
-              f = fxFreq;
-              if (fxLFO) {
-                f *= oscLFO(lfoFreq * k) * lfoAmt + 0.5;
+            if (rs || fa) {
+              let f = (i.i[21] * 43.23529 * M.PI) / 44100;
+              if (i.i[19]) {
+                f *= ol(2 ** (i.i[18] - 9) / l * k) * i.i[17] / 512 + 0.5;
               }
-              f = 1.5 * Math.sin(f);
-              low += f * band;
-              high = q * (rsample - band) - low;
-              band += f * high;
-              rsample = fxFilter == 3 ? band : fxFilter == 1 ? high : low;
+              f = 1.5 * M.s(f);
+              lo += f * b;
+              h = (1 - i.i[22] / 255) * (rs - b) - lo;
+              b += f * h;
+              rs = ff == 3 ? b : ff == 1 ? h : lo;
 
-              if (dist) {
-                rsample *= dist;
-                rsample = rsample < 1 ? (rsample > -1 ? osc_sin(rsample * 0.25) : -1) : 1;
-                rsample /= dist;
+              if (d) {
+                rs *= d;
+                rs = rs < 1 ? (rs > -1 ? o1(rs * 0.25) : -1) : 1;
+                rs /= d;
               }
 
-              rsample *= drive;
+              rs *= i.i[24] / 32;
 
-              filterActive = rsample * rsample > 1e-5;
+              fa = rs * rs > 1e-5;
 
-              t = Math.sin(panFreq * k) * panAmt + 0.5;
-              lsample = rsample * (1 - t);
-              rsample *= t;
+              let t = M.s((M.PI * 4 ** (i.i[26] - 9)) / l * k) * i.i[25] / 512 + 0.5;
+              ls = rs * (1 - t);
+              rs *= t;
             } else {
-              lsample = 0;
+              ls = 0;
             }
 
-            if (k >= dly) {
-              lsample += chnBuf[k - dly + 1] * dlyAmt;
+            if (k >= dl) {
+              
+           let d = i.i[27] / 255;
+              ls += cb[k - dl + 1] * d;
 
-              rsample += chnBuf[k - dly] * dlyAmt;
+              rs += cb[k - dl] * d;
             }
 
-            chnBuf[k] = lsample | 0;
-            chnBuf[k + 1] = rsample | 0;
+            cb[k] = ls | 0;
+            cb[k + 1] = rs | 0;
 
-            mMixBuf[k] += lsample | 0;
-            mMixBuf[k + 1] += rsample | 0;
+            mm[k] += ls | 0;
+            mm[k + 1] += rs | 0;
           }
         }
       }
 
-      mCurrentCol++;
-      return mCurrentCol / mSong.numChannels;
+      mc++;
+      return mc / ms.c;
     };
 
-    this.createWave = function () {
-      var headerLen = 44;
-      var l1 = headerLen + mNumWords * 2 - 8;
-      var l2 = l1 - 36;
-      var wave = new Uint8Array(headerLen + mNumWords * 2);
-      wave.set([
+    this.w =  () => {
+      let h = 44;
+      let l1 = h + mn * 2 - 8;
+      let l2 = l1 - 36;
+      let w = new U(h + mn * 2);
+      w.set([
         82,
         73,
         70,
@@ -254,31 +237,31 @@ class CPlayer {
         (l2 >> 24) & 255,
       ]);
 
-      for (var i = 0, idx = headerLen; i < mNumWords; ++i) {
-        var y = mMixBuf[i];
+      for (let i = 0, j = h; i < mn; ++i) {
+        var y = mm[i];
         y = y < -32767 ? -32767 : y > 32767 ? 32767 : y;
-        wave[idx++] = y & 255;
-        wave[idx++] = (y >> 8) & 255;
+        w[j++] = y & 255;
+        w[j++] = (y >> 8) & 255;
       }
 
-      return wave;
+      return w;
     };
   }
 }
 
-const playSound = (song, loop = false) => {
-  const cplayer = new CPlayer();
-  cplayer.init(song);
-  cplayer.generate();
-  const wave = cplayer.createWave();
-  const audio = document.createElement('audio');
-  audio.src = URL.createObjectURL(new Blob([wave], { type: 'audio/wav' }));
-  audio.play();
-  if (loop) audio.onended = () => audio.play();
+let _p = (s, l = 0) => {
+  let p = new P();
+  p.i(s);
+  p.g();
+  let w = p.w();
+  let a = D.c('audio');
+  a.src = URL.createObjectURL(new Blob([w], { type: 'audio/wav' }));
+  a.play();
+  if (l) a.onended = () => a.play();
 };
 
-const bg = {
-  songData: [
+let b$ = {
+  d: [
     {
       i: [
         2, 192, 128, 0, 2, 192, 140, 18, 0, 0, 158, 119, 158, 0, 0, 0, 0, 0, 0, 0, 2, 5, 0, 0, 128,
@@ -288,16 +271,16 @@ const bg = {
       c: [{ n: [108, , , , , , , , 116, , , , , , , , , , , , 101], f: [] }],
     },
   ],
-  rowLen: 22050,
-  patternLen: 32,
-  endPattern: 0,
-  numChannels: 1,
+  l: 22050,
+  pl: 32,
+  e: 0,
+  c: 1,
 };
 
-playSound(bg, true);
+_p(b$, 1);
 
-const arrowSound = {
-  songData: [
+let a$ = {
+  d: [
     {
       i: [
         3, 0, 128, 0, 0, 55, 128, 0, 64, 36, 19, 5, 47, 87, 0, 0, 1, 55, 7, 0, 2, 67, 115, 124, 255,
@@ -307,14 +290,14 @@ const arrowSound = {
       c: [{ n: [146], f: [] }],
     },
   ],
-  rowLen: 5513,
-  patternLen: 10,
-  endPattern: 0,
-  numChannels: 1,
+  l: 5513,
+  pl: 10,
+  e: 0,
+  c: 1,
 };
 
-const killSound = {
-  songData: [
+const k$ = {
+  d: [
     {
       i: [
         0, 255, 116, 64, 0, 255, 120, 0, 64, 255, 31, 6, 73, 0, 0, 0, 0, 0, 8, 0, 2, 14, 0, 10, 200,
@@ -324,14 +307,14 @@ const killSound = {
       c: [{ n: [122], f: [] }],
     },
   ],
-  rowLen: 5513,
-  patternLen: 10,
-  endPattern: 0,
-  numChannels: 1,
+  l: 5513,
+  pl: 10,
+  e: 0,
+  c: 1,
 };
 
-const shotSound = {
-  songData: [
+const s$ = {
+  d: [
     {
       i: [
         3, 255, 106, 64, 0, 255, 92, 15, 160, 0, 5, 12, 103, 0, 12, 7, 3, 130, 11, 0, 2, 255, 0, 2,
@@ -341,14 +324,14 @@ const shotSound = {
       c: [{ n: [134], f: [] }],
     },
   ],
-  rowLen: 5513,
-  patternLen: 10,
-  endPattern: 0,
-  numChannels: 1,
+  l: 5513,
+  pl: 10,
+  e: 0,
+  c: 1,
 };
 
-const treatSound = {
-  songData: [
+const t$ = {
+  d: [
     {
       i: [
         2, 138, 116, 0, 2, 138, 128, 4, 0, 0, 47, 48, 128, 63, 124, 3, 0, 139, 4, 1, 2, 64, 160, 3,
@@ -358,16 +341,15 @@ const treatSound = {
       c: [{ n: [170], f: [] }],
     },
   ],
-  rowLen: 5513,
-  patternLen: 10,
-  endPattern: 0,
-  numChannels: 1,
+  l: 5513,
+  pl: 10,
+  e: 0,
+  c: 1,
 };
 
-let rooms = [
+let r = [
   {
-    // 0
-    walls: [
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 1, 0, 200],
       [2, 'N'],
@@ -379,8 +361,7 @@ let rooms = [
     ],
   },
   {
-    // 1
-    walls: [
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 2, 0, 200],
       [2, 'N'],
@@ -390,11 +371,10 @@ let rooms = [
       [2, 'S'],
       [5, 'W'],
     ],
-    enemies: [{ x: 0, y: -400, hp: 100, speed: 5, strength: 1, t: 'D' }],
+    e: [{ x: 0, y: -400, l: 100, p: 5, s: 1, t: 'D' }],
   },
-  {
-    // 2
-    walls: [
+  { 
+    w: [
       [2, 'N'],
       [1, 'N', ' D G', 3, 0, 200],
       [2, 'N'],
@@ -405,9 +385,8 @@ let rooms = [
       [5, 'W'],
     ],
   },
-  {
-    // 3
-    walls: [
+  { 
+    w: [
       [5, 'N'],
       [2, 'E'],
       [1, 'E', ' D', 4, -400, 600],
@@ -419,17 +398,16 @@ let rooms = [
       [1, 'W', ' D', 7, 400, 600],
       [2, 'W'],
     ],
-    treats: [
-      { x: -100, y: -100, t: 'A', g: false },
-      { x: 100, y: -100, t: 'A', g: false },
-      { x: 0, y: 0, t: 'F', g: false },
-      { x: -100, y: 100, t: 'A', g: false },
-      { x: 100, y: 100, t: 'A', g: false },
+    t: [
+      { x: -100, y: -100, t: 'A', g: 0 },
+      { x: 100, y: -100, t: 'A', g: 0 },
+      { x: 0, y: 0, t: 'F', g: 0 },
+      { x: -100, y: 100, t: 'A', g: 0 },
+      { x: 100, y: 100, t: 'A', g: 0 },
     ],
   },
   {
-    // 4
-    walls: [
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 5, 0, 200],
       [2, 'N'],
@@ -439,11 +417,11 @@ let rooms = [
       [1, 'W', ' D', 3, 400, 600],
       [2, 'W'],
     ],
-    enemies: [{ x: 0, y: 0, hp: 100, speed: 5, strength: 1, t: 'D' }],
+    e: [{ x: 0, y: 0, l: 100, p: 5, s: 1, t: 'D' }],
   },
   {
-    // 5
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 6, 0, 200],
       [2, 'N'],
@@ -453,17 +431,17 @@ let rooms = [
       [2, 'S'],
       [5, 'W'],
     ],
-    treats: [
-      { x: -100, y: -100, t: 'A', g: false },
-      { x: 100, y: -100, t: 'A', g: false },
-      { x: 0, y: 0, t: 'A', g: false },
-      { x: -100, y: 100, t: 'A', g: false },
-      { x: 100, y: 100, t: 'A', g: false },
+    t: [
+      { x: -100, y: -100, t: 'A', g: 0 },
+      { x: 100, y: -100, t: 'A', g: 0 },
+      { x: 0, y: 0, t: 'A', g: 0 },
+      { x: -100, y: 100, t: 'A', g: 0 },
+      { x: 100, y: 100, t: 'A', g: 0 },
     ],
   },
   {
-    // 6
-    walls: [
+    
+    w: [
       [5, 'N'],
       [5, 'E'],
       [2, 'S'],
@@ -473,11 +451,11 @@ let rooms = [
       [1, 'W', ' D', 10, 400, 600],
       [2, 'W'],
     ],
-    enemies: [{ x: 0, y: 0, hp: 100, speed: 5, strength: 1, t: 'D' }],
+    e: [{ x: 0, y: 0, l: 100, p: 5, s: 1, t: 'D' }],
   },
   {
-    // 7
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 8, 0, 200],
       [2, 'N'],
@@ -487,11 +465,11 @@ let rooms = [
       [5, 'S'],
       [5, 'W'],
     ],
-    enemies: [{ x: 0, y: 0, hp: 100, speed: 5, strength: 1, t: 'D' }],
+    e: [{ x: 0, y: 0, l: 100, p: 5, s: 1, t: 'D' }],
   },
   {
-    // 8
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 9, 0, 200],
       [2, 'N'],
@@ -501,18 +479,18 @@ let rooms = [
       [2, 'S'],
       [5, 'W'],
     ],
-    treats: [
-      { x: -100, y: -100, t: 'F', g: false },
-      { x: 100, y: -100, t: 'F', g: false },
-      { x: 0, y: 0, t: 'F', g: false },
-      { x: -100, y: 100, t: 'F', g: false },
-      { x: 100, y: 100, t: 'F', g: false },
+    t: [
+      { x: -100, y: -100, t: 'F', g: 0 },
+      { x: 100, y: -100, t: 'F', g: 0 },
+      { x: 0, y: 0, t: 'F', g: 0 },
+      { x: -100, y: 100, t: 'F', g: 0 },
+      { x: 100, y: 100, t: 'F', g: 0 },
     ],
   },
 
   {
-    // 9
-    walls: [
+    
+    w: [
       [5, 'N'],
       [2, 'E'],
       [1, 'E', ' D', 10, -400, 600],
@@ -522,11 +500,11 @@ let rooms = [
       [2, 'S'],
       [5, 'W'],
     ],
-    enemies: [{ x: 0, y: 0, hp: 100, speed: 5, strength: 1, t: 'D' }],
+    e: [{ x: 0, y: 0, l: 100, p: 5, s: 1, t: 'D' }],
   },
   {
-    // 10
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D G', 11, 0, 200],
       [2, 'N'],
@@ -540,8 +518,8 @@ let rooms = [
     ],
   },
   {
-    // 11
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 12, 0, 100],
       [2, 'N'],
@@ -553,9 +531,9 @@ let rooms = [
     ],
   },
   {
-    // 12
-    start: [3.5, 3],
-    walls: [
+    
+    s: [3.5, 3],
+    w: [
       [3, 'N'],
       [1, 'N', ' D', 13, 0, 200],
       [3, 'N'],
@@ -567,22 +545,22 @@ let rooms = [
       [3, 'W'],
       [3, 'W'],
     ],
-    enemies: [{ x: 600, y: -500, hp: 400, speed: 15, strength: 5, t: 'B', j: true }],
-    treats: [
-      { x: -600, y: -500, t: 'F', g: false },
-      { x: 600, y: -500, t: 'F', g: false },
-      { x: -100, y: -100, t: 'A', g: false },
-      { x: -100, y: 100, t: 'A', g: false },
-      { x: 0, y: 0, t: 'A', g: false },
-      { x: 100, y: -100, t: 'A', g: false },
-      { x: 100, y: 100, t: 'A', g: false },
-      { x: -600, y: 500, t: 'F', g: false },
-      { x: 600, y: 500, t: 'F', g: false },
+    e: [{ x: 600, y: -500, l: 400, p: 15, s: 5, t: 'B', j: 1 }],
+    t: [
+      { x: -600, y: -500, t: 'F', g: 0 },
+      { x: 600, y: -500, t: 'F', g: 0 },
+      { x: -100, y: -100, t: 'A', g: 0 },
+      { x: -100, y: 100, t: 'A', g: 0 },
+      { x: 0, y: 0, t: 'A', g: 0 },
+      { x: 100, y: -100, t: 'A', g: 0 },
+      { x: 100, y: 100, t: 'A', g: 0 },
+      { x: -600, y: 500, t: 'F', g: 0 },
+      { x: 600, y: 500, t: 'F', g: 0 },
     ],
   },
   {
-    // 13
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D G', 14, 0, 200],
       [2, 'N'],
@@ -594,8 +572,8 @@ let rooms = [
     ],
   },
   {
-    // 14
-    walls: [
+    
+    w: [
       [5, 'N'],
       [2, 'E'],
       [1, 'E', ' D', 15, -400, 600],
@@ -609,8 +587,8 @@ let rooms = [
     ],
   },
   {
-    // 15
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 16, 0, 200],
       [2, 'N'],
@@ -620,14 +598,14 @@ let rooms = [
       [1, 'W', ' D', 14, 400, 600],
       [2, 'W'],
     ],
-    enemies: [
-      { x: -100, y: 100, hp: 100, speed: 5, strength: 1, t: 'D' },
-      { x: 100, y: -100, hp: 100, speed: 5, strength: 1, t: 'D' },
+    e: [
+      { x: -100, y: 100, l: 100, p: 5, s: 1, t: 'D' },
+      { x: 100, y: -100, l: 100, p: 5, s: 1, t: 'D' },
     ],
   },
   {
-    // 16
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 17, 0, 200],
       [2, 'N'],
@@ -637,17 +615,17 @@ let rooms = [
       [2, 'S'],
       [5, 'W'],
     ],
-    treats: [
-      { x: -100, y: -100, t: 'A', g: false },
-      { x: 100, y: -100, t: 'A', g: false },
-      { x: 0, y: 0, t: 'A', g: false },
-      { x: -100, y: 100, t: 'A', g: false },
-      { x: 100, y: 100, t: 'A', g: false },
+    t: [
+      { x: -100, y: -100, t: 'A', g: 0 },
+      { x: 100, y: -100, t: 'A', g: 0 },
+      { x: 0, y: 0, t: 'A', g: 0 },
+      { x: -100, y: 100, t: 'A', g: 0 },
+      { x: 100, y: 100, t: 'A', g: 0 },
     ],
   },
   {
-    // 17
-    walls: [
+    
+    w: [
       [5, 'N'],
       [5, 'E'],
       [2, 'S'],
@@ -657,14 +635,14 @@ let rooms = [
       [1, 'W', ' D', 21, 400, 600],
       [2, 'W'],
     ],
-    enemies: [
-      { x: 100, y: 100, hp: 100, speed: 5, strength: 1, t: 'D' },
-      { x: -100, y: -100, hp: 100, speed: 5, strength: 1, t: 'D' },
+    e: [
+      { x: 100, y: 100, l: 100, p: 5, s: 1, t: 'D' },
+      { x: -100, y: -100, l: 100, p: 5, s: 1, t: 'D' },
     ],
   },
   {
-    // 18
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 19, 0, 200],
       [2, 'N'],
@@ -674,14 +652,14 @@ let rooms = [
       [5, 'S'],
       [5, 'W'],
     ],
-    enemies: [
-      { x: 100, y: 100, hp: 100, speed: 5, strength: 1, t: 'D' },
-      { x: -100, y: -100, hp: 100, speed: 5, strength: 1, t: 'D' },
+    e: [
+      { x: 100, y: 100, l: 100, p: 5, s: 1, t: 'D' },
+      { x: -100, y: -100, l: 100, p: 5, s: 1, t: 'D' },
     ],
   },
   {
-    // 19
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 20, 0, 200],
       [5, 'N'],
@@ -691,19 +669,19 @@ let rooms = [
       [2, 'S'],
       [5, 'W'],
     ],
-    treats: [
-      { x: -100, y: -100, t: 'F', g: false },
-      { x: 100, y: -100, t: 'F', g: false },
-      { x: 0, y: 0, t: 'F', g: false },
-      { x: -100, y: 100, t: 'F', g: false },
-      { x: 100, y: 100, t: 'F', g: false },
+    t: [
+      { x: -100, y: -100, t: 'F', g: 0 },
+      { x: 100, y: -100, t: 'F', g: 0 },
+      { x: 0, y: 0, t: 'F', g: 0 },
+      { x: -100, y: 100, t: 'F', g: 0 },
+      { x: 100, y: 100, t: 'F', g: 0 },
     ],
-    enemies: [{ x: 900, y: 0, hp: 400, speed: 15, strength: 20, t: 'B' }],
+    e: [{ x: 900, y: 0, l: 400, p: 15, s: 20, t: 'B' }],
   },
 
   {
-    // 20
-    walls: [
+    
+    w: [
       [5, 'N'],
       [2, 'E'],
       [1, 'E', ' D', 21, -400, 600],
@@ -713,14 +691,14 @@ let rooms = [
       [2, 'S'],
       [5, 'W'],
     ],
-    enemies: [
-      { x: -100, y: 100, hp: 100, speed: 5, strength: 1, t: 'D' },
-      { x: 100, y: -100, hp: 100, speed: 5, strength: 1, t: 'D' },
+    e: [
+      { x: -100, y: 100, l: 100, p: 5, s: 1, t: 'D' },
+      { x: 100, y: -100, l: 100, p: 5, s: 1, t: 'D' },
     ],
   },
   {
-    // 21
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D G', 22, 0, 200],
       [2, 'N'],
@@ -734,8 +712,8 @@ let rooms = [
     ],
   },
   {
-    // 22
-    walls: [
+    
+    w: [
       [2, 'N'],
       [1, 'N', ' D', 23, 0, 100],
       [2, 'N'],
@@ -749,9 +727,9 @@ let rooms = [
     ],
   },
   {
-    // 23
-    start: [3.5, 3],
-    walls: [
+    
+    s: [3.5, 3],
+    w: [
       [3, 'N'],
       [1, 'N', ' D', 24, 0, 200],
       [3, 'N'],
@@ -763,15 +741,15 @@ let rooms = [
       [3, 'W'],
       [3, 'W'],
     ],
-    enemies: [
-      { x: 0, y: 0, hp: 400, speed: 15, strength: 20, t: 'B' },
-      { x: -600, y: 500, hp: 100, speed: 5, strength: 1, t: 'D' },
-      { x: 600, y: 500, hp: 100, speed: 5, strength: 1, t: 'D' },
+    e: [
+      { x: 0, y: 0, l: 400, p: 15, s: 20, t: 'B' },
+      { x: -600, y: 500, l: 100, p: 5, s: 1, t: 'D' },
+      { x: 600, y: 500, l: 100, p: 5, s: 1, t: 'D' },
     ],
   },
   {
-    // 24
-    walls: [
+    
+    w: [
       [5, 'N'],
       [5, 'E'],
       [2, 'S'],
@@ -779,224 +757,219 @@ let rooms = [
       [2, 'S'],
       [5, 'W'],
     ],
-    treats: [
-      { x: -200, y: -200, t: 'F', g: false },
-      { x: 0, y: -200, t: 'A', g: false },
-      { x: 200, y: -200, t: 'F', g: false },
-      { x: -200, y: 0, t: 'A', g: false },
-      { x: 0, y: 0, t: 'F', g: false },
-      { x: 200, y: 0, t: 'A', g: false },
-      { x: -200, y: 200, t: 'F', g: false },
-      { x: 0, y: 200, t: 'A', g: false },
-      { x: 200, y: 200, t: 'F', g: false },
-      { x: -400, y: -400, t: 'A', g: false },
-      { x: -400, y: 400, t: 'A', g: false },
-      { x: 400, y: -400, t: 'A', g: false },
-      { x: 400, y: 400, t: 'A', g: false },
+    t: [
+      { x: -200, y: -200, t: 'F', g: 0 },
+      { x: 0, y: -200, t: 'A', g: 0 },
+      { x: 200, y: -200, t: 'F', g: 0 },
+      { x: -200, y: 0, t: 'A', g: 0 },
+      { x: 0, y: 0, t: 'F', g: 0 },
+      { x: 200, y: 0, t: 'A', g: 0 },
+      { x: -200, y: 200, t: 'F', g: 0 },
+      { x: 0, y: 200, t: 'A', g: 0 },
+      { x: 200, y: 200, t: 'F', g: 0 },
+      { x: -400, y: -400, t: 'A', g: 0 },
+      { x: -400, y: 400, t: 'A', g: 0 },
+      { x: 400, y: -400, t: 'A', g: 0 },
+      { x: 400, y: 400, t: 'A', g: 0 },
     ],
   },
   {
-    // 25
+    
     f: 1,
-    start: [3.5, 3.5],
-    walls: [
+    s: [3.5, 3.5],
+    w: [
       [7, 'N'],
       [7, 'E'],
       [7, 'S'],
       [7, 'W'],
     ],
-    enemies: [{ x: 200, y: 0, hp: 2000, speed: 10, strength: 200, t: 'V' }],
-    treats: [
-      { x: -600, y: -600, t: 'F', g: false },
-      { x: -600, y: 600, t: 'F', g: false },
-      { x: 600, y: -600, t: 'F', g: false },
-      { x: 600, y: 600, t: 'F', g: false },
-      { x: 0, y: -600, t: 'A', g: false },
-      { x: 0, y: 600, t: 'A', g: false },
-      { x: -600, y: 0, t: 'A', g: false },
-      { x: 600, y: 0, t: 'A', g: false },
+    e: [{ x: 200, y: 0, l: 2000, p: 10, s: 200, t: 'V' }],
+    t: [
+      { x: -600, y: -600, t: 'F', g: 0 },
+      { x: -600, y: 600, t: 'F', g: 0 },
+      { x: 600, y: -600, t: 'F', g: 0 },
+      { x: 600, y: 600, t: 'F', g: 0 },
+      { x: 0, y: -600, t: 'A', g: 0 },
+      { x: 0, y: 600, t: 'A', g: 0 },
+      { x: -600, y: 0, t: 'A', g: 0 },
+      { x: 600, y: 0, t: 'A', g: 0 },
     ],
   },
 ];
 
-const roomsBU = JSON.stringify(rooms);
+let rB = JSON.stringify(r);
 
-const calcDist = obj => {
-  const distX = (Math.abs(player.posX - obj.x) - 90) / 200;
-  const distY = (Math.abs(600 - player.posY - obj.y) - 90) / 200;
-  return Math.max(distX * distX + distY * distY, 1);
+let _cD = o => {
+  let x = (M.a(p.X - o.x) - 90) / 200;
+  let y = (M.a(600 - p.Y - o.y) - 90) / 200;
+  return M.t(x * x + y * y, 1);
 };
-const MAX_HP = {
+let $L = {
   D: 100,
   B: 400,
   V: 2000,
 };
-const S = {
-  D: 1,
-  B: 10,
-  V: 0,
-};
-const shotMe = obj => {
-  playSound(shotSound);
-  const dist = calcDist(obj);
-  const { x: ax, y: ay } = obj;
-  const { posX: bx, posY: by } = player;
+let _sM = o => {
+  _p(s$);
+  let dt = _cD(o);
+  let { x: ax, y: ay } = o;
+  let { X: bx, Y: by } = p;
   setTimeout(() => {
-    const { posX: cx, posY: cy } = player;
-    const dx = ax - cx;
-    const dy = ay - cy;
-    const ex = bx - cx;
-    const ey = by - cy;
-    const fx = bx - ax;
-    const fy = by - ay;
-    const d =
+    let { X: cx, Y: cy } = p;
+    let dx = ax - cx, dy = ay - cy,ex = bx - cx,ey = by - cy,fx = bx - ax,fy = by - ay, d =
       dx * fx >= 0 && dy * fy >= 0
         ? 0
-        : Math.min(1 / Math.abs(dx * ey - ex * dy) / (fx * fx + fy * fy), 100) * obj.strength;
-    player.hp -= d / player.s;
-    playSound(killSound);
-  }, dist * 100);
+        : M.b(1 / M.a(dx * ey - ex * dy) / (fx * fx + fy * fy), 100) * o.s;
+    p.l -= d / p.s;
+    _p(k$);
+  }, dt * 100);
 };
-const createEnemy = obj => {
-  const elem = document.createElement('div');
-  elem.className = `e ${obj.t}`;
-  elem.style.setProperty('--x', `${obj.x}px`);
-  elem.style.setProperty('--y', `${obj.y}px`);
-  elem.style.setProperty('--l', `${(50 * obj.hp) / MAX_HP[obj.t]}px`);
+let _cE = o => {
+  let e = D.c('div');
+  e.className = `e ${o.t}`;
+  e.style.setProperty('--x', `${o.x}px`);
+  e.style.setProperty('--y', `${o.y}px`);
+  e.style.setProperty('--l', `${(50 * o.l) / $L[o.t]}px`);
 
-  const d = Math.random() * 3;
-  elem.style.setProperty('--d', `-${d}s`);
+  let d = M.r() * 3;
+  e.style.setProperty('--d', `-${d}s`);
 
-  const moveI = setInterval(() => {
-    const distX = player.posX - obj.x;
-    const distY = 600 - player.posY - obj.y;
-    if (Math.abs(distX) > 80) obj.x += obj.speed * (distX > 0 ? 1 : -1);
-    if (Math.abs(distY) > 80) obj.y += obj.speed * (distY > 0 ? 1 : -1);
+  let si = setInterval;
+  let mI = si(() => {
+    let dx = p.X - o.x;
+    let dy = 600 - p.Y - o.y;
+    if (M.a(dx) > 80) o.x += o.p * (dx > 0 ? 1 : -1);
+    if (M.a(dy) > 80) o.y += o.p * (dy > 0 ? 1 : -1);
   }, 100);
-  const jumpI =
-    obj.j &&
-    setInterval(() => {
-      obj.x = -obj.x;
-      obj.y = -obj.y;
+  let jI =
+    o.j &&
+    si(() => {
+      o.x = -o.x;
+      o.y = -o.y;
     }, 15000);
 
-  let shotI;
-  const shotT = setTimeout(() => {
-    shotMe(obj);
-    shotI = setInterval(() => {
-      shotMe(obj);
+  let sI;
+  let sT = setTimeout(() => {
+    _sM(o);
+    sI = si(() => {
+      _sM(o);
     }, 3000);
   }, 3000 - d * 1000);
 
-  elem.addEventListener('click', () => {
-    if (player.a <= 0) return;
-    const dist = Math.max(calcDist(obj), 1);
-    obj.hp -= player.s / dist;
-    elem.style.setProperty('--l', `${(50 * obj.hp) / MAX_HP[obj.t]}px`);
-    if (obj.hp <= 0) {
-      obj.stop();
-      player.s += S[obj.t];
-      elem.parentNode.removeChild(elem);
-      playSound(killSound);
+  e.addEventListener('click', () => {
+    if (p.a <= 0) return;
+    let d = M.t(_cD(o), 1);
+    o.l -= p.s / d;
+    e.style.setProperty('--l', `${(50 * o.l) / $L[o.t]}px`);
+    if (o.l <= 0) {
+      o.s();
+      p.s += {
+        D: 1,
+        B: 10,
+        V: 0,
+      }[o.t];
+      e.parentNode.removeChild(e);
+      _p(k$);
 
-      if (obj.t === 'V') handleWin();
+      if (o.t === 'V') _hW();
     }
   });
 
-  obj.stop = () => {
-    clearInterval(shotT);
-    clearInterval(shotI);
-    clearInterval(moveI);
-    if (obj.j) clearInterval(jumpI);
+  o.s = () => {
+    let ci = clearInterval;
+    ci(sT);
+    ci(sI);
+    ci(mI);
+    if (o.j) ci(jI);
   };
 
-  return { elem, obj };
+  return { e, o };
 };
 
-const createTreat = obj => {
-  const elem = document.createElement('div');
-  elem.className = `t ${obj.t}`;
+const _cT = o => {
+  const e = D.c('div');
+  e.className = `t ${o.t}`;
 
-  elem.style.setProperty('--x', `${obj.x}px`);
-  elem.style.setProperty('--y', `${obj.y}px`);
+  e.style.setProperty('--x', `${o.x}px`);
+  e.style.setProperty('--y', `${o.y}px`);
 
-  return { elem, obj };
+  return { e, o };
 };
 
-let walls = [];
-let wallsH = [];
-let wallsV = [];
-let enemies = [];
-let treats = [];
+let w = [];
+let wH = [];
+let wV = [];
+let e = [];
+let t = [];
 
-const P_X = 0;
-const P_Y = 200;
+const X = 0;
+const Y = 200;
 
-const controller = {
+const c = {
   shift: {
-    pressed: false,
+    p: 0,
   },
   arrowleft: {
-    pressed: false,
-    action: () => {
-      player.rot -= 0.04;
+    p: 0,
+    a: () => {
+      p.R -= 0.04;
     },
-    shiftAction: () => {
-      player.moveDistV(-1, Math.cos);
-      player.moveDistH(1, Math.sin);
+    s: () => {
+      p.V(-1, M.c);
+      p.H(1, M.s);
     },
   },
   arrowright: {
-    pressed: false,
-    action: () => (player.rot += 0.04),
-    shiftAction: () => {
-      player.moveDistV(1, Math.cos);
-      player.moveDistH(-1, Math.sin);
+    p: 0,
+    a: () => (p.R += 0.04),
+    s: () => {
+      p.V(1, M.c);
+      p.H(-1, M.s);
     },
   },
   arrowup: {
-    pressed: false,
-    action: () => {
-      player.moveDistV(1, Math.sin);
-      player.moveDistH(1, Math.cos);
+    p: 0,
+    a: () => {
+      p.V(1, M.s);
+      p.H(1, M.c);
     },
   },
   arrowdown: {
-    pressed: false,
-    action: () => {
-      player.moveDistV(-1, Math.sin);
-      player.moveDistH(-1, Math.cos);
+    p: 0,
+    a: () => {
+      p.V(-1, M.s);
+      p.H(-1, M.c);
     },
   },
 };
-controller.a = { ...controller.arrowleft };
-controller.d = { ...controller.arrowright };
-controller.w = { ...controller.arrowup };
-controller.s = { ...controller.arrowdown };
+c.a = { ...c.arrowleft };
+c.d = { ...c.arrowright };
+c.w = { ...c.arrowup };
+c.s = { ...c.arrowdown };
 
-const player = {
-  rot: 0,
-  _hp: 100,
+const p = {
+  R: 0,
+  _l: 100,
   _s: 10,
   _a: 20,
-  posX: P_X,
-  posY: P_Y,
-  block: false,
+  X: X,
+  Y: Y,
+  b: 0,
 
-  get hp() {
-    return this._hp;
+  get l() {
+    return this._l;
   },
-  set hp(_hp) {
-    if (_hp <= 0) handleLose();
-    this._hp = Math.max(Math.min(100, _hp), 0);
-    document.getElementById('h').style.setProperty('--w', `${this._hp}%`);
+  set l(_l) {
+    if (_l <= 0) _hL();
+    this._l = M.t(M.b(100, _l), 0);
+    D.g('h').style.setProperty('--w', `${this._l}%`);
   },
 
   get s() {
     return this._s;
   },
   set s(_s) {
-    document.getElementById('s').innerText = _s;
+    D.g('s').innerText = _s;
     this._s = _s;
   },
 
@@ -1004,93 +977,89 @@ const player = {
     return this._a;
   },
   set a(_a) {
-    if (_a < 0 || player.block) return;
-    playSound(arrowSound);
-    document.getElementById('a').innerText = _a;
+    if (_a < 0 || p.b) return;
+    _p(a$);
+    D.g('a').innerText = _a;
     this._a = _a;
   },
 
-  moveDistH: (t, tg) => {
-    const dist = t * 10 * tg(player.rot);
-    for (let i = 0; i < wallsH.length; i++) {
-      const wall = wallsH[i];
+  H: (k, t) => {
+    let d = k * 10 * t(p.R);
+    for (let i = 0; i < wH.length; i++) {
+      let w = wH[i];
 
-      const pY = player.posY - 600;
-      if (Math.abs(pY - +wall.dataset.y + dist) > 50) continue;
+      if (M.a(p.Y - 600 - +w.dataset.y + d) > 50) continue;
 
-      const isS = wall.classList.contains('S');
-      const isD = wall.classList.contains('D') && !wall.classList.contains('C');
-      const pX = (player.posX + +wall.dataset.x) * (isS ? -1 : 1);
+      let x = (p.X + +w.dataset.x) * (w.classList.contains('S') ? -1 : 1);
 
-      if (pX > -50 && +wall.dataset.w - pX > -50) {
-        if (isD) {
-          player.posX = +wall.dataset.px;
-          player.posY = +wall.dataset.py;
-          createRoom(rooms[+wall.dataset.r]);
+      if (x > -50 && +w.dataset.w - x > -50) {
+        if (w.classList.contains('D') && !w.classList.contains('C')) {
+          p.X = +w.dataset.px;
+          p.Y = +w.dataset.py;
+          _cR(r[+w.dataset.r]);
         }
         return;
       }
     }
 
-    player.posY += dist;
+    p.Y += d;
   },
-  moveDistV: (t, tg) => {
-    const dist = t * 10 * tg(player.rot);
-    for (let i = 0; i < wallsV.length; i++) {
-      const wall = wallsV[i];
+  V: (k, t) => {
+    let d = k * 10 * t(p.R);
+    for (let i = 0; i < wV.length; i++) {
+      let w = wV[i];
 
-      if (Math.abs(player.posX + +wall.dataset.x + dist) > 50) continue;
+      if (M.a(p.X + +w.dataset.x + d) > 50) continue;
 
-      const isE = wall.classList.contains('E');
-      const isD = wall.classList.contains('D') && !wall.classList.contains('C');
-      const pY = (player.posY - 600 - +wall.dataset.y) * (isE ? -1 : 1);
+      let y = (p.Y - 600 - +w.dataset.y) * (w.classList.contains('E') ? -1 : 1);
 
-      if (pY > -50 && +wall.dataset.w - pY > -50) {
-        if (isD) {
-          player.posX = +wall.dataset.px;
-          player.posY = +wall.dataset.py;
-          createRoom(rooms[+wall.dataset.r]);
+      if (y > -50 && +w.dataset.w - y > -50) {
+        if (w.classList.contains('D') && !w.classList.contains('C')) {
+          p.X = +w.dataset.px;
+          p.Y = +w.dataset.py;
+          _cR(r[+w.dataset.r]);
         }
         return;
       }
     }
 
-    player.posX += dist;
+    p.X += d;
   },
 };
 
-document.addEventListener('keydown', event => {
-  const key = event.key.toLowerCase();
-  if (key === 'escape') resetGame();
-  if (controller[key]) {
-    controller[key].pressed = true;
+D.a('keydown', e => {
+  let k = e.key.toLowerCase();
+  if (k === 'escape') _rG();
+  if (c[k]) {
+    c[k].p = 1;
   }
 });
 
-document.addEventListener('keyup', event => {
-  const key = event.key.toLowerCase();
-  if (controller[key]) {
-    controller[key].pressed = false;
+D.a('keyup', e => {
+  let k = e.key.toLowerCase();
+  if (c[k]) {
+    c[k].p = 0;
   }
 });
 
-const executeMoves = () => {
-  if (player.block) return;
-  Object.keys(controller).forEach(key => {
-    controller[key].pressed &&
-      ((controller['shift'].pressed && controller[key].shiftAction) || controller[key].action)?.();
+let _eM = () => {
+  if (p.b) return;
+  Object.keys(c).forEach(k => {
+    c[k].p &&
+      ((c['shift'].p && c[k].s) || c[k].a)?.();
   });
-  document.documentElement.style.setProperty('--R', `${player.rot}rad`);
-  document.documentElement.style.setProperty('--X', `${player.posX}px`);
-  document.documentElement.style.setProperty('--Y', `${player.posY}px`);
+  let d = document.documentElement;
+  d.style.setProperty('--R', `${p.R}rad`);
+  d.style.setProperty('--X', `${p.X}px`);
+  d.style.setProperty('--Y', `${p.Y}px`);
 };
 
-const calculateShadow = () => {
-  walls.forEach(element => {
-    let pXL = (pYR = player.posX + +element.dataset.x);
-    let pYL = (pXR = player.posY - 600 - +element.dataset.y);
-    const w = +element.dataset.w;
-    switch (element.classList[1]) {
+let _cS = () => {
+  w.forEach(e => {
+    let pXL = (pYR = p.X + +e.dataset.x);
+    let pYL = (pXR = p.Y - 600 - +e.dataset.y);
+    const w = +e.dataset.w;
+    switch (e.classList[1]) {
       case 'N':
         pYR -= w;
         break;
@@ -1104,169 +1073,165 @@ const calculateShadow = () => {
         pXR -= w;
         break;
     }
-    const alphaL = Math.min(1, Math.sqrt(pXL * pXL + pYL * pYL) / 1500);
-    const alphaR = Math.min(1, Math.sqrt(pXR * pXR + pYR * pYR) / 1500);
-    element.style.setProperty('--sAL', alphaR);
-    element.style.setProperty('--sAR', alphaL);
+    e.style.setProperty('--l',  M.b(1, M.sqrt(pXR * pXR + pYR * pYR) / 1500));
+    e.style.setProperty('--r',  M.b(1, M.sqrt(pXL * pXL + pYL * pYL) / 1500));
   });
 };
 
-const executeEnemyMoves = () => {
-  enemies.forEach(({ obj, elem }) => {
-    elem.style.setProperty('--x', `${obj.x}px`);
-    elem.style.setProperty('--y', `${obj.y}px`);
+let _eEM = () => {
+  e.forEach(({ o, e }) => {
+    e.style.setProperty('--x', `${o.x}px`);
+    e.style.setProperty('--y', `${o.y}px`);
   });
 };
 
-const getTreat = () => {
-  treats = treats.filter(({ obj, elem }) => {
-    const distX = player.posX - obj.x;
-    const distY = 600 - player.posY - obj.y;
-    if (Math.abs(distX) < 50 && Math.abs(distY) < 50) {
-      switch (obj.t) {
+let _gT = () => {
+  t = t.filter(({ o, e }) => {
+    if (M.a( p.X - o.x) < 50 && M.a(600 - p.Y - o.y) < 50) {
+      switch (o.t) {
         case 'A':
-          player.a += 10;
+          p.a += 10;
           break;
         case 'F':
-          if (player.hp >= 100) return true;
-          player.hp += 10;
+          if (p.l >= 100) return 1;
+          p.l += 10;
           break;
       }
-      obj.g = true;
-      elem.parentNode.removeChild(elem);
-      playSound(treatSound);
+      o.g = 1;
+      e.parentNode.removeChild(e);
+      _p(t$);
 
-      return false;
+      return 0;
     }
-    return true;
+    return 1;
   });
 };
 
-const animate = () => {
-  executeMoves();
-  calculateShadow();
-  executeEnemyMoves();
-  getTreat();
-  window.requestAnimationFrame(animate);
+let a = () => {
+  _eM();
+  _cS();
+  _eEM();
+  _gT();
+  requestAnimationFrame(a);
 };
-window.requestAnimationFrame(animate);
+requestAnimationFrame(a);
 
-const createRoom = room => {
-  document.getElementById('g').innerHTML = '';
-  walls = [];
-  wallsH = [];
-  wallsV = [];
-  treats = [];
-  enemies = enemies.filter(enemy => {
-    enemy.obj.stop();
-    return false;
+let _cR = r => {
+  D.g('g').innerHTML = '';
+  w = [];
+  wH = [];
+  wV = [];
+  t = [];
+  e = e.filter(e => {
+    e.o.s();
+    return 0;
   });
-  const roomElem = document.createElement('div');
-  roomElem.className = 'r';
+  let rE = D.c('div');
+  rE.className = 'r';
 
   let mh = (mw = mx = my = -Infinity);
-  let [x, y] = room.start || [2.5, 2.5];
+  let [x, y] = r.s || [2.5, 2.5];
 
   let h = (w = 0);
-  room.walls.forEach(([len, dir, ...d]) => {
-    const wallElem = document.createElement('div');
-    wallElem.className = 'w ' + dir + (d[0] || '') + (room.f ? ' F' : '');
-    wallElem.dataset.x = x * 200;
-    wallElem.dataset.y = y * 200;
-    wallElem.dataset.w = len * 200;
+  r.w.forEach(([len, dir, ...d]) => {
+    let e = D.c('div');
+    e.className = 'w ' + dir + (d[0] || '') + (r.f ? ' F' : '');
+    e.dataset.x = x * 200;
+    e.dataset.y = y * 200;
+    e.dataset.w = len * 200;
     if (d.length === 4) {
-      wallElem.dataset.r = d[1];
-      wallElem.dataset.px = d[2];
-      wallElem.dataset.py = d[3];
+      e.dataset.r = d[1];
+      e.dataset.px = d[2];
+      e.dataset.py = d[3];
     }
 
-    wallElem.style.width = `${len * 200}px`;
-    wallElem.style.setProperty('--x', `${x * 200}px`);
-    wallElem.style.setProperty('--y', `${y * 200}px`);
-    roomElem.appendChild(wallElem);
+    e.style.width = `${len * 200}px`;
+    e.style.setProperty('--x', `${x * 200}px`);
+    e.style.setProperty('--y', `${y * 200}px`);
+    rE.appendChild(e);
 
     switch (dir) {
       case 'N':
         x -= len;
         w += len;
-        wallsH.push(wallElem);
+        wH.push(e);
         break;
       case 'S':
         x += len;
-        wallsH.push(wallElem);
+        wH.push(e);
         break;
       case 'E':
         y -= len;
         h += len;
-        wallsV.push(wallElem);
+        wV.push(e);
         break;
       case 'W':
         y += len;
-        wallsV.push(wallElem);
+        wV.push(e);
         break;
     }
 
-    mx = Math.max(mx, x);
-    my = Math.max(my, y);
+    mx = M.t(mx, x);
+    my = M.t(my, y);
   });
-  mh = Math.max(mh, h);
-  mw = Math.max(mw, w);
+  mh = M.t(mh, h);
+  mw = M.t(mw, w);
 
-  walls = [...wallsH, ...wallsV];
+  w = [...wH, ...wV];
 
-  const floorElem = document.createElement('div');
-  floorElem.className = 'f';
-  floorElem.style.width = `${mw * 200}px`;
-  floorElem.style.height = `${mh * 200}px`;
-  floorElem.style.setProperty('--w', `${mw * 200}px`);
-  floorElem.style.setProperty('--h', `${mh * 200}px`);
-  floorElem.style.setProperty('--x', `${mx * 200}px`);
-  floorElem.style.setProperty('--y', `${my * 200}px`);
-  roomElem.appendChild(floorElem);
+  let fE = D.c('div');
+  fE.className = 'f';
+  fE.style.width = `${mw * 200}px`;
+  fE.style.height = `${mh * 200}px`;
+  fE.style.setProperty('--w', `${mw * 200}px`);
+  fE.style.setProperty('--h', `${mh * 200}px`);
+  fE.style.setProperty('--x', `${mx * 200}px`);
+  fE.style.setProperty('--y', `${my * 200}px`);
+  rE.appendChild(fE);
 
-  room.treats?.forEach(treat => {
-    if (!treat.g) {
-      const cTreat = createTreat(treat);
-      treats.push(cTreat);
-      roomElem.appendChild(cTreat.elem);
+  r.t?.forEach(_t => {
+    if (!_t.g) {
+      let cT = _cT(_t);
+      t.push(cT);
+      rE.appendChild(cT.e);
     }
   });
-  room.enemies?.forEach(enemy => {
-    if (enemy.hp > 0) {
-      const cEnemy = createEnemy(enemy);
-      enemies.push(cEnemy);
-      roomElem.appendChild(cEnemy.elem);
+  r.e?.forEach(_e => {
+    if (_e.l > 0) {
+      let cE = _cE(_e);
+      e.push(cE);
+      rE.appendChild(cE.e);
     }
   });
 
-  document.getElementById('g').appendChild(roomElem);
+  D.g('g').appendChild(rE);
 };
 
-createRoom(rooms[0]);
+_cR(r[0]);
 
-document.addEventListener('click', () => {
-  player.a--;
+D.a('click', () => {
+  p.a--;
 });
 
-const resetGame = () => {
-  rooms = JSON.parse(roomsBU);
-  player.block = false;
-  player.s = 10;
-  player.hp = 100;
-  player.a = 20;
-  player.rot = 0;
-  player.posX = P_X;
-  player.posY = P_Y;
-  document.body.classList = '';
-  createRoom(rooms[0]);
+const _rG = () => {
+  r = JSON.parse(rB);
+  p.b = 0;
+  p.s = 10;
+  p.l = 100;
+  p.a = 20;
+  p.R = 0;
+  p.X = X;
+  p.Y = Y;
+  D.body.classList = '';
+  _cR(r[0]);
 };
 
-const handleWin = () => {
-  document.body.classList = 'W';
-  player.block = true;
+const _hW = () => {
+  D.body.classList = 'W';
+  p.b = 1;
 };
 
-const handleLose = () => {
-  document.body.classList = 'L';
-  player.block = true;
+const _hL = () => {
+  D.body.classList = 'L';
+  p.b = 1;
 };
