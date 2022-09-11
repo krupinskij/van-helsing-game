@@ -1,3 +1,4 @@
+(() => {
 let M = Math, I = Int32Array, U = Uint8Array, D = document
 M.s = M.sin;
 M.c = M.cos;
@@ -862,7 +863,7 @@ let _cE = o => {
     o.l -= p.s / d;
     e.style.setProperty('--l', `${(50 * o.l) / $L[o.t]}px`);
     if (o.l <= 0) {
-      o.s();
+      o.st();
       p.s += {
         D: 1,
         B: 10,
@@ -875,7 +876,7 @@ let _cE = o => {
     }
   });
 
-  o.s = () => {
+  o.st = () => {
     let ci = clearInterval;
     ci(sT);
     ci(sI);
@@ -978,7 +979,7 @@ const p = {
   },
   set a(_a) {
     if (_a < 0 || p.b) return;
-    _p(a$);
+    D.body.classList.toggle('N', _a === 0)
     D.g('a').innerText = _a;
     this._a = _a;
   },
@@ -1123,7 +1124,7 @@ let _cR = r => {
   wV = [];
   t = [];
   e = e.filter(e => {
-    e.o.s();
+    e.o.st();
     return 0;
   });
   let rE = D.c('div');
@@ -1210,7 +1211,10 @@ let _cR = r => {
 _cR(r[0]);
 
 D.a('click', () => {
-  p.a--;
+  if(p.a > 0) {
+    _p(a$);
+    p.a--;
+  }
 });
 
 const _rG = () => {
@@ -1235,3 +1239,4 @@ const _hL = () => {
   D.body.classList = 'L';
   p.b = 1;
 };
+})()

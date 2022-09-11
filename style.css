@@ -17,6 +17,12 @@
   font-family: Arial;
 }
 
+#b.N {
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAjklEQVRIS+2VOxLAIAhE8f6HzqewYcZ5LEUgiRk7heUtGIcVfaNI17bwY873s/owu5bdQ5AqjuKXSSmQekLxSEMJfAHR832FJxGR0L53BonLhVcFqKQzT5i4XDhqPV03mbhM2Pf0uz0mMtp/zz1WSaLncaqjidRp7/csqqTq84hW0x8ou7+Fs87Jcf+z+gSoJEQfkyw4qAAAAABJRU5ErkJggg==)
+      7 7,
+    auto !important
+}
+
 #b::before {
   white-space: pre;
   position: absolute;
