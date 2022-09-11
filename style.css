@@ -2,9 +2,8 @@
   --posX: 0px;
   --posY: 200px;
   --rot: 0rad;
-  --pers: 600px;
-  --sAL: 0;
-  --sAR: 0;
+  --pers: 2100px;
+  --H: 0px;
 }
 
 body {
@@ -29,6 +28,10 @@ body::before {
   display: none;
 }
 
+body.N {
+  cursor: url(/assets/cursor/noarrows.png) 7 7, auto !important;
+}
+
 body.W::before {
   content: 'You won!\APress [Esc] to play again';
   display: grid;
@@ -46,7 +49,7 @@ body.L::before {
 .r {
   perspective: var(--pers);
   perspective-origin: 0px 100px;
-  transform: translateX(var(--pers)) translateY(200px);
+  transform: translate(var(--pers), var(--H));
 }
 
 .f {
@@ -81,6 +84,20 @@ body.L::before {
 }
 .w.F {
   --i: url(./assets/fwall.png);
+}
+
+.w.P::before {
+  position: absolute;
+  content: '';
+  inset: 0px;
+  background: url(/assets/portrait.png);
+  background-color: darkred;
+  background-size: cover;
+  margin: auto;
+  border: 3px solid #fff;
+  border-radius: 5px;
+  width: 110px;
+  height: 150px;
 }
 
 .w.D::before {
@@ -151,8 +168,8 @@ body.L::before {
 
 .e.D {
   --base: 3px 0px/66px 108px url(/assets/dwergi/base.png);
-  --move1: 12px 102px/48px 18px url(/assets/dwergi/footl.png);
-  --move2: 12px 102px/48px 18px url(/assets/dwergi/footr.png);
+  --move1: 12px 102px/48px 18px url(/assets/dwergi/move1.png);
+  --move2: 12px 102px/48px 18px url(/assets/dwergi/move2.png);
   --static: 0px 42px/72px 45px url(/assets/dwergi/static.png);
   --aim: 0 39px/72px 30px url(/assets/dwergi/aim.png);
   --shot: 0 39px/72px 30px url(/assets/dwergi/shot.png);
@@ -165,14 +182,14 @@ body.L::before {
 }
 
 .e.B {
-  --base: 124px 24px/84px 104px url(/assets/bride/bride_base.png);
-  --move1: 0px 0px/332px 108px url(/assets/bride/bride_wing-up.png);
-  --move2: 0px 0px/332px 108px url(/assets/bride/bride_wing-down.png);
+  --base: 124px 24px/84px 104px url(/assets/bride/base.png);
+  --move1: 0px 0px/332px 108px url(/assets/bride/move1.png);
+  --move2: 0px 0px/332px 108px url(/assets/bride/move2.png);
   --static: 112px 36px/108px 36px url();
-  --aim: 112px 36px/108px 36px url(/assets/bride/bride_shoot.png);
-  --shot: 112px 36px/108px 36px url(/assets/bride/bride_bullet.png);
-  --detail1: 108px 4px/88px 84px url(/assets/bride/hair-a-1.png);
-  --detail2: 108px 4px/88px 84px url(/assets/bride/hair-a-2.png);
+  --aim: 112px 36px/108px 36px url(/assets/bride/aim.png);
+  --shot: 112px 36px/108px 36px url(/assets/bride/shot.png);
+  --detail1: 108px 4px/88px 84px url(/assets/bride/detail1.png);
+  --detail2: 108px 4px/88px 84px url(/assets/bride/detail2.png);
   --h: 128px;
   --w: 332px;
   --ty: 20px;
@@ -180,12 +197,12 @@ body.L::before {
 }
 
 .e.V {
-  --base: 56px 24px/80px 156px url(/assets/dracula/dracula_base.png);
-  --move1: 0px 0px/192px 192px url(/assets/dracula/dracula_move-1.png);
-  --move2: 0px 0px/192px 192px url(/assets/dracula/dracula_move-2.png);
-  --static: 24px 24px/144px 92px url(/assets/dracula/dracula_noshoot.png);
-  --aim: 24px 24px/144px 92px url(/assets/dracula/dracula_shoot.png);
-  --shot: 24px 24px/144px 92px url(/assets/dracula/dracula_bullet.png);
+  --base: 56px 24px/80px 156px url(/assets/dracula/base.png);
+  --move1: 0px 0px/192px 192px url(/assets/dracula/move1.png);
+  --move2: 0px 0px/192px 192px url(/assets/dracula/move2.png);
+  --static: 24px 24px/144px 92px url(/assets/dracula/static.png);
+  --aim: 24px 24px/144px 92px url(/assets/dracula/aim.png);
+  --shot: 24px 24px/144px 92px url(/assets/dracula/shot.png);
   --detail1: url();
   --detail2: url();
   --h: 192px;

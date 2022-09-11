@@ -1,6 +1,6 @@
 const calcDist = obj => {
   const distX = (Math.abs(player.posX - obj.x) - 90) / 200;
-  const distY = (Math.abs(600 - player.posY - obj.y) - 90) / 200;
+  const distY = (Math.abs(PERS - player.posY - obj.y) - 90) / 200;
   return Math.max(distX * distX + distY * distY, 1);
 };
 const MAX_HP = {
@@ -46,7 +46,7 @@ const createEnemy = obj => {
 
   const moveI = setInterval(() => {
     const distX = player.posX - obj.x;
-    const distY = 600 - player.posY - obj.y;
+    const distY = PERS - player.posY - obj.y;
     if (Math.abs(distX) > 80) obj.x += obj.speed * (distX > 0 ? 1 : -1);
     if (Math.abs(distY) > 80) obj.y += obj.speed * (distY > 0 ? 1 : -1);
   }, 100);

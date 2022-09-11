@@ -4,9 +4,6 @@ let wallsV = [];
 let enemies = [];
 let treats = [];
 
-const P_X = 0;
-const P_Y = 200;
-
 const controller = {
   shift: {
     pressed: false,
@@ -80,17 +77,17 @@ const player = {
   },
   set a(_a) {
     if (_a < 0 || player.block) return;
-    playSound(arrowSound);
+    document.body.classList.toggle('N', _a === 0);
     document.getElementById('a').innerText = _a;
     this._a = _a;
   },
 
   moveDistH: (t, tg) => {
-    const dist = t * 10 * tg(player.rot);
+    const dist = (t * PERS * tg(player.rot)) / 80;
     for (let i = 0; i < wallsH.length; i++) {
       const wall = wallsH[i];
 
-      const pY = player.posY - 600;
+      const pY = player.posY - PERS;
       if (Math.abs(pY - +wall.dataset.y + dist) > 50) continue;
 
       const isS = wall.classList.contains('S');
@@ -110,7 +107,7 @@ const player = {
     player.posY += dist;
   },
   moveDistV: (t, tg) => {
-    const dist = t * 10 * tg(player.rot);
+    const dist = (t * PERS * tg(player.rot)) / 80;
     for (let i = 0; i < wallsV.length; i++) {
       const wall = wallsV[i];
 
@@ -118,7 +115,7 @@ const player = {
 
       const isE = wall.classList.contains('E');
       const isD = wall.classList.contains('D') && !wall.classList.contains('C');
-      const pY = (player.posY - 600 - +wall.dataset.y) * (isE ? -1 : 1);
+      const pY = (player.posY - PERS - +wall.dataset.y) * (isE ? -1 : 1);
 
       if (pY > -50 && +wall.dataset.w - pY > -50) {
         if (isD) {
@@ -163,7 +160,7 @@ const executeMoves = () => {
 const calculateShadow = () => {
   walls.forEach(element => {
     let pXL = (pYR = player.posX + +element.dataset.x);
-    let pYL = (pXR = player.posY - 600 - +element.dataset.y);
+    let pYL = (pXR = player.posY - PERS - +element.dataset.y);
     const w = +element.dataset.w;
     switch (element.classList[1]) {
       case 'N':
@@ -196,7 +193,7 @@ const executeEnemyMoves = () => {
 const getTreat = () => {
   treats = treats.filter(({ obj, elem }) => {
     const distX = player.posX - obj.x;
-    const distY = 600 - player.posY - obj.y;
+    const distY = PERS - player.posY - obj.y;
     if (Math.abs(distX) < 50 && Math.abs(distY) < 50) {
       switch (obj.t) {
         case 'A':
@@ -320,7 +317,10 @@ const createRoom = room => {
 createRoom(rooms[0]);
 
 document.addEventListener('click', () => {
-  player.a--;
+  if (player.a > 0) {
+    playSound(arrowSound);
+    player.a--;
+  }
 });
 
 const resetGame = () => {
