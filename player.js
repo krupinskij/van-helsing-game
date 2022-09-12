@@ -396,6 +396,6 @@ const playSound = (song, loop = false) => {
   const wave = cplayer.createWave();
   const audio = document.createElement('audio');
   audio.src = URL.createObjectURL(new Blob([wave], { type: 'audio/wav' }));
-  audio.play();
+  audio.oncanplaythrough = () => audio.play()?.catch(() => {});
   if (loop) audio.onended = () => audio.play();
 };
